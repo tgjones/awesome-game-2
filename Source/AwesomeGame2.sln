@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AwesomeGame2", "AwesomeGame2\AwesomeGame2.csproj", "{BD287692-0380-4A97-8967-D67ECF0E1A5A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BD287692-0380-4A97-8967-D67ECF0E1A5A}.Debug|x86.ActiveCfg = Debug|x86
+		{BD287692-0380-4A97-8967-D67ECF0E1A5A}.Debug|x86.Build.0 = Debug|x86
+		{BD287692-0380-4A97-8967-D67ECF0E1A5A}.Release|x86.ActiveCfg = Release|x86
+		{BD287692-0380-4A97-8967-D67ECF0E1A5A}.Release|x86.Build.0 = Release|x86
+		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Debug|x86.ActiveCfg = Debug|x86
+		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
