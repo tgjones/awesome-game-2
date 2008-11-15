@@ -115,10 +115,10 @@ namespace SD.Core
                         
                         transporters = new List<TransporterInfo>(_connection.GetTransporters());
 
-                        //foreach (LocationInfo location in locations)
-                        //{
-                        //    _connection.UpdateStockInfo(location);
-                        //}
+                        foreach (TransporterInfo transporter in transporters)
+                        {
+                            _connection.UpdateStockInfo(transporter);
+                        }
 
                         XmlHelper.SerialiseTransporterList(transporters, context.Response.OutputStream);
 

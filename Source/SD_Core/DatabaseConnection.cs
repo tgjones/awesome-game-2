@@ -275,7 +275,7 @@ namespace SD.Core
             List<TransporterInfo> transporters = new List<TransporterInfo>();
 
             MySqlCommand command = _connection.CreateCommand();
-            command.CommandText = @"SELECT T.id, T.player_id, T.route_id, T.last_moved, T.distance_travelled, T.commodity_id, T.capacity, T.load, T.transport_type_id FROM transporters T;";
+            command.CommandText = @"SELECT T.id, T.player_id, T.route_id, T.last_moved, T.distance_travelled, T.capacity, T.transport_type_id FROM transporters T;";
 
             using (MySqlDataReader Reader = command.ExecuteReader())
             {
@@ -286,12 +286,10 @@ namespace SD.Core
                     int route_id = (int)Reader.GetUInt32(2);
                     DateTime last_moved = (DateTime)Reader.GetMySqlDateTime(3);
                     decimal distance_travelled = Reader.GetDecimal(4);
-                    int commodity_id = (int)Reader.GetUInt32(5);
-                    int capacity = (int)Reader.GetUInt32(6);
-                    int load = (int)Reader.GetUInt32(7);
-                    int transport_type_id = (int)Reader.GetUInt32(8);
+                    int capacity = (int)Reader.GetUInt32(5);
+                    int transport_type_id = (int)Reader.GetUInt32(6);
 
-                    TransporterInfo transporterInfo = new TransporterInfo(id, player_id, route_id, last_moved, distance_travelled, commodity_id, capacity, load, transport_type_id);
+                    TransporterInfo transporterInfo = new TransporterInfo(id, player_id, route_id, last_moved, distance_travelled, capacity, transport_type_id);
                     transporters.Add(transporterInfo);
                 }
             }
@@ -345,6 +343,54 @@ namespace SD.Core
                         {
                             stock.UnitPrice = price;
                             Console.WriteLine("\nPrice of {0} changed at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Update the stock levels for a transporter from the database.
+        /// </summary>
+        /// <param name="transporter">The transporter to update the stock levels for.</param>
+        internal void UpdateStockInfo(TransporterInfo transporter)
+        {
+            if (!IsConnected)
+                throw new Exception("Not connected to database.");
+
+            MySqlCommand command = _connection.CreateCommand();
+            //command.CommandText = string.Format(@"SELECT S.commodity_id, S.quantity, S.price FROM location_stock S WHERE S.location_id={0};", location.Id);
+            command.CommandText = string.Format(@"SELECT S.commodity_id, S.quantity, S.bought_price FROM transporter_stock S WHERE S.transporter_id={0};", transporter.Id);
+
+            using (MySqlDataReader Reader = command.ExecuteReader())
+            {
+                while (Reader.Read())
+                {
+                    int id = (int)Reader.GetUInt32(0);
+                    int quantity = (int)Reader.GetUInt32(1);
+                    int price = (int)Reader.GetUInt32(2);
+                    StockInfo stock = transporter.Stocks.Find(n => (n.ResourceType == (ResourceEnum)id));
+                    if (stock == null)
+                    {
+                        if (quantity > 0)
+                        {
+                            stock = new StockInfo((ResourceEnum)id, quantity, price);
+                            transporter.Stocks.Add(stock);
+                            //Console.WriteLine("\nNew stock of {0} at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
+                        }
+                    }
+                    else
+                    {
+                        if (quantity == 0)
+                        {
+                            transporter.Stocks.Remove(stock);
+                            //Console.WriteLine("\nNo more {0} at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
+                        }
+
+                        if (stock.Quantity != quantity)
+                        {
+                            stock.Quantity = quantity;
+                            //Console.WriteLine("\nQuantity of {0} changed at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
                         }
                     }
                 }

@@ -34,14 +34,13 @@ namespace SD.Shared
             internal const string balance = "balance";
             internal const string transporters = "tranporters";
             internal const string transporter = "tranporter";
-            internal const string player_id = "player_id";
-            internal const string route_id = "route_id";
-            internal const string last_moved = "last_moved";
-            internal const string distance_travelled = "distance_travelled";
-            internal const string commodity_id = "commodity_id";
+            internal const string playerid = "playerid";
+            internal const string routeid = "routeid";
+            internal const string lastmoved = "lastmoved";
+            internal const string distancetravelled = "distancetravelled";
             internal const string capacity = "capacity";
-            internal const string load = "load";
-            internal const string transport_type_id = "transport_type_id";
+            internal const string transporttypeid = "transporttypeid";
+            internal const string boughtprice = "boughtprice";
         }
 
         public static List<LocationInfo> DeserialiseLocationList(Stream stream)
@@ -145,14 +144,21 @@ namespace SD.Shared
                 select
                     new XElement(xNames.transporter,
                         new XAttribute(xNames.id, l.Id),
-                        new XAttribute(xNames.player_id, l.PlayerId),
-                        new XAttribute(xNames.route_id, l.RouteId),
-                        new XAttribute(xNames.last_moved, l.LastMoved),
-                        new XAttribute(xNames.distance_travelled, l.DistanceTravelled),
-                        new XAttribute(xNames.commodity_id, l.CommodityId),
+                        new XAttribute(xNames.playerid, l.PlayerId),
+                        new XAttribute(xNames.routeid, l.RouteId),
+                        new XAttribute(xNames.lastmoved, l.LastMoved),
+                        new XAttribute(xNames.distancetravelled, l.DistanceTravelled),
                         new XAttribute(xNames.capacity, l.Capacity),
-                        new XAttribute(xNames.load, l.Load),
-                        new XAttribute(xNames.transport_type_id, l.TransportTypeId)
+                        new XElement(xNames.stocks,
+                            from s in l.Stocks
+                            select
+                                new XElement(xNames.stock,
+                                    new XAttribute(xNames.resourcetype, s.ResourceType),
+                                    new XAttribute(xNames.quantity, s.Quantity),
+                                    new XAttribute(xNames.boughtprice, s.UnitPrice)
+                                )
+                            ),
+                        new XAttribute(xNames.transporttypeid, l.TransportTypeId)
                         )
                     );
 
