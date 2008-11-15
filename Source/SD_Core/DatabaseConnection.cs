@@ -2,18 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DbLinq.Factory;
 using MySql.Data.MySqlClient;
 
 using SD.Shared;
-using SdLinq;
+
 
 namespace SD.Core
 {
     internal class DatabaseConnection
     {
         MySqlConnection _connection;
-        Sd _sdLinq;
 
         #region Constructor and destructor
 
@@ -63,7 +61,6 @@ namespace SD.Core
             _connection.Open();
             if (_connection.State == System.Data.ConnectionState.Open)
             {
-                _sdLinq = new Sd(_connection);
                 Console.Write(" Connected!\n");
             }
             else
@@ -91,22 +88,20 @@ namespace SD.Core
             if (!IsConnected)
                 throw new Exception("Not connected to database.");
 
-            //List<string> players = new List<string>();
+            List<string> players = new List<string>();
 
-            //MySqlCommand command = _connection.CreateCommand();
-            //command.CommandText = @"select name from players";
+            MySqlCommand command = _connection.CreateCommand();
+            command.CommandText = @"select name from players";
 
-            //using (MySqlDataReader Reader = command.ExecuteReader())
-            //{
-            //    while (Reader.Read())
-            //    {
-            //        players.Add(Reader.GetString(0));
-            //    }
-            //}
+            using (MySqlDataReader Reader = command.ExecuteReader())
+            {
+                while (Reader.Read())
+                {
+                    players.Add(Reader.GetString(0));
+                }
+            }
 
-            //return (players);
-
-            return from p in _sdLinq.Players select p.Name;
+            return (players);
         }
 
         /// <summary>

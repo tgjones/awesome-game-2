@@ -48,7 +48,7 @@ namespace SD.Shared
                                                         (string)xe.Attribute(xNames.name),
                                                         new List<StockInfo>(from xs in xe.Element(xNames.stocks).Elements(xNames.stock)
                                                                             select
-                                                                                new StockInfo((ResourceEnum)(int)xs.Attribute(xNames.resourcetype),
+                                                                                new StockInfo((ResourceEnum)Enum.Parse(typeof(ResourceEnum),(string)xs.Attribute(xNames.resourcetype)),
                                                                                     (int)xs.Attribute(xNames.quantity),
                                                                                     (int)xs.Attribute(xNames.unitprice)
                                                                                     )
