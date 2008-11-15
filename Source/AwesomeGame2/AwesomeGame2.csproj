@@ -89,6 +89,7 @@
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="ICameraService.cs" />
     <Compile Include="ICursorService.cs" />
+    <Compile Include="Input\IMouseService.cs" />
     <Compile Include="Input\MouseComponent.cs" />
     <Compile Include="Mesh.cs" />
     <Compile Include="Picker.cs" />

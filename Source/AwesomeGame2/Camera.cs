@@ -7,8 +7,10 @@ using Microsoft.Xna.Framework;
 
 namespace AwesomeGame2
 {
-	public class Camera : ICameraService
+    public class Camera : GameComponent, ICameraService
 	{
+        private float _targetRadius;
+
 		#region Properties
 
 		public Vector3 Position
@@ -81,7 +83,7 @@ namespace AwesomeGame2
 
 		#region Constructor
 
-		public Camera()
+		public Camera(Game game) : base (game)
 		{
 			Rectangle clientBounds = AwesomeGame2.Instance.Window.ClientBounds;
 			this.AspectRatio = clientBounds.Width / (float) clientBounds.Height;
@@ -98,9 +100,20 @@ namespace AwesomeGame2
 
 		#region Methods
 
-		public void Update()
-		{
-			
+        public override void Update(GameTime gameTime)
+        {
+            Input.IMouseService lMouseService = this.Game.Services.GetService<Input.IMouseService>();
+
+            // Update the zoom target level
+            _targetRadius -= 0.03f * lMouseService.ScrollWheelValueChange; // sensitivity
+            if (_targetRadius < 3.0f)
+                _targetRadius = 3.0f; // closest zoom radius
+
+            // Update the zoom
+            float lRadius = this.Position.Length() + Math.Min(gameTime.ElapsedRealTime.Milliseconds / 250.0f, 1.0f) * (_targetRadius - this.Position.Length()); // lag speed
+            Vector3 lPosition = this.Position;
+            lPosition.Normalize();
+            this.Position = lPosition * lRadius;
 
 			this.View = Matrix.CreateLookAt(this.Position, this.LookAt, this.Up);
 			this.Projection = Matrix.CreatePerspectiveFieldOfView(this.FieldOfView,

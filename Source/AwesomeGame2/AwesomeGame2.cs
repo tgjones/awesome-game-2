@@ -48,10 +48,15 @@ namespace AwesomeGame2
 		/// </summary>
 		protected override void Initialize()
 		{
-			_camera = new Camera();
+			_camera = new Camera(this);
 			_camera.Position = new Vector3(0, 10, 10);
 			_camera.LookAt = Vector3.Zero;
 			this.Services.AddService(typeof(ICameraService), _camera);
+            this.Components.Add(_camera);
+
+            Input.MouseComponent mouse = new Input.MouseComponent(this);
+            this.Services.AddService(typeof(Input.IMouseService), mouse);
+            this.Components.Add(mouse);
 
 			Mesh globe = new Mesh(this, "Globe") { Name = "Globe" };
 			this.Components.Add(globe);
@@ -96,8 +101,6 @@ namespace AwesomeGame2
 			// Allows the game to exit
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
 				this.Exit();
-
-			_camera.Update();
 
 			base.Update(gameTime);
 		}
