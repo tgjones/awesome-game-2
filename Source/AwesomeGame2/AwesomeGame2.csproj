@@ -88,6 +88,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="AwesomeGame2.cs" />
+    <Compile Include="Starfield.cs" />
     <Compile Include="Sunlight.cs" />
   </ItemGroup>
   <ItemGroup>

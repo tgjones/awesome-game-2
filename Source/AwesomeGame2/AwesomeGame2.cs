@@ -24,7 +24,7 @@ namespace AwesomeGame2
 		private SpriteBatch _spriteBatch;
 		private Camera _camera;
 		private Model _test0;
-
+        
 		public static AwesomeGame2 Instance
 		{
 			get
@@ -53,6 +53,8 @@ namespace AwesomeGame2
 			_camera.Position = new Vector3(0, 10, 10);
 			_camera.LookAt = Vector3.Zero;
 
+            this.Components.Add(new Starfield(this, _camera, 1500));
+
 			base.Initialize();
 		}
 
@@ -62,10 +64,7 @@ namespace AwesomeGame2
 		/// </summary>
 		protected override void LoadContent()
 		{
-			// Create a new SpriteBatch, which can be used to draw textures.
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
-
-			// TODO: use this.Content to load your game content here
 			_test0 = this.Content.Load<Model>("Globe");
 		}
 
