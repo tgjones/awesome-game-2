@@ -9,7 +9,7 @@ namespace AwesomeGame2
 		/// </summary>
 		static void Main(string[] args)
 		{
-			using (Game1 game = new Game1())
+			using (AwesomeGame2 game = AwesomeGame2.Instance)
 			{
 				game.Run();
 			}

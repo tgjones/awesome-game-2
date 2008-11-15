@@ -16,14 +16,28 @@ namespace AwesomeGame2
 	/// <summary>
 	/// This is the main type for your game
 	/// </summary>
-	public class Game1 : Microsoft.Xna.Framework.Game
+	public class AwesomeGame2 : Microsoft.Xna.Framework.Game
 	{
-		GraphicsDeviceManager graphics;
-		SpriteBatch spriteBatch;
+		private static AwesomeGame2 _instance;
 
-		public Game1()
+		private GraphicsDeviceManager _graphics;
+		private SpriteBatch _spriteBatch;
+		private Camera _camera;
+		private Model _test0;
+
+		public static AwesomeGame2 Instance
 		{
-			graphics = new GraphicsDeviceManager(this);
+			get
+			{
+				if (_instance == null)
+					_instance = new AwesomeGame2();
+				return _instance;
+			}
+		}
+
+		private AwesomeGame2()
+		{
+			_graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
 		}
 
@@ -35,7 +49,9 @@ namespace AwesomeGame2
 		/// </summary>
 		protected override void Initialize()
 		{
-			// TODO: Add your initialization logic here
+			_camera = new Camera();
+			_camera.Position = new Vector3(10, 10, 10);
+			_camera.LookAt = Vector3.Zero;
 
 			base.Initialize();
 		}
@@ -47,9 +63,10 @@ namespace AwesomeGame2
 		protected override void LoadContent()
 		{
 			// Create a new SpriteBatch, which can be used to draw textures.
-			spriteBatch = new SpriteBatch(GraphicsDevice);
+			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
 			// TODO: use this.Content to load your game content here
+			_test0 = this.Content.Load<Model>("test0");
 		}
 
 		/// <summary>
@@ -72,7 +89,7 @@ namespace AwesomeGame2
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
 				this.Exit();
 
-			// TODO: Add your update logic here
+			_camera.UpdateMatrices();
 
 			base.Update(gameTime);
 		}
@@ -85,7 +102,19 @@ namespace AwesomeGame2
 		{
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 
-			// TODO: Add your drawing code here
+			Matrix[] transforms = new Matrix[_test0.Bones.Count];
+			_test0.CopyAbsoluteBoneTransformsTo(transforms);
+			foreach (ModelMesh mesh in _test0.Meshes)
+			{
+				foreach (BasicEffect effect in mesh.Effects)
+				{
+					effect.World = transforms[mesh.ParentBone.Index];
+					effect.View = _camera.View;
+					effect.Projection = _camera.Projection;
+				}
+
+				mesh.Draw();
+			}
 
 			base.Draw(gameTime);
 		}
