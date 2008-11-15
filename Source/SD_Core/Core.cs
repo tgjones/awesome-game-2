@@ -13,19 +13,25 @@ namespace SD.Core
     {
         public static void Main()
         {
-            Thread gameThread = new Thread(new ThreadStart(GameProcessor));
+            DatabaseConnection _connection = new DatabaseConnection();
+            _connection.Connect();
+
+            Thread gameThread = new Thread(
+                delegate()
+                {
+                    GameProcessor(_connection);
+                }
+                );
             gameThread.IsBackground = false;
             gameThread.Start();
 
-            var server = new Server("http://192.168.0.103:54321/");
+            Server server = new Server(@"http://192.168.0.103:54321/", _connection);
             new System.Threading.Thread(server.Start).Start();
+
         }
 
-        private static void GameProcessor()
+        static void GameProcessor(DatabaseConnection database)
         {
-            DatabaseConnection database = new DatabaseConnection();
-            database.Connect();
-
             List<LocationInfo> _locations;
 
             #region Get initial data from database

@@ -12,13 +12,19 @@ namespace SD.Core
     internal class Server
     {
         HttpListener _listener;
+        DatabaseConnection _connection;
 
-        public Server(string uriPrefix)
+        public Server(string uriPrefix, DatabaseConnection connection)
         {
+            if (string.IsNullOrEmpty(uriPrefix)) throw new ArgumentNullException("uriPrefix");
+            if (connection == null) throw new ArgumentNullException("connection");
+
             System.Threading.ThreadPool.SetMaxThreads(5, 1000);
             System.Threading.ThreadPool.SetMinThreads(5, 5);
             _listener = new HttpListener();
             _listener.Prefixes.Add(uriPrefix);
+
+            _connection = connection;
         }
 
         public void Start()
@@ -44,15 +50,12 @@ namespace SD.Core
                 Uri uri = context.Request.Url;
                 Console.WriteLine(uri.PathAndQuery);
 
-                DatabaseConnection database = new DatabaseConnection();
-                database.Connect();
-
                 List<LocationInfo> locations;
-                locations = new List<LocationInfo>(database.GetLocations());
+                locations = new List<LocationInfo>(_connection.GetLocations());
 
                 foreach (LocationInfo location in locations)
                 {
-                    database.UpdateStockInfo(location);
+                    _connection.UpdateStockInfo(location);
                 }
 
                 XmlHelper.SerialiseLocationList(locations, context.Response.OutputStream);
