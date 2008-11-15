@@ -13,6 +13,7 @@ namespace AwesomeGame2
         private float _targetRadius;
         private Vector3 _pickedRadius;
         private Vector2 _position;
+        private Vector2 _positionChange;
 
 		#region Properties
 
@@ -110,8 +111,11 @@ namespace AwesomeGame2
                 _targetRadius = 6.0f; // furthest zoom radius
 
             // Update the zoom
-            Radius += Math.Min(gameTime.ElapsedGameTime.Ticks * 2.0f, TimeSpan.TicksPerSecond) * (_targetRadius - Radius) / TimeSpan.TicksPerSecond; // lag speed
-            
+            Radius = Vector2.SmoothStep(
+                 new Vector2(Radius, Radius),
+                  new Vector2(_targetRadius, _targetRadius),
+                  gameTime.ElapsedGameTime.Ticks * 5.0f / TimeSpan.TicksPerSecond).X; // lag speed
+
             // Update the dragged position
             if (!lMouseService.RightClickPressed || float.IsNaN(lPicker.PickedRadius.Length()))
             {
@@ -126,11 +130,14 @@ namespace AwesomeGame2
                 Vector3 lDifference = lPicker.PickedRadius - _pickedRadius;
                 lDifference = Vector3.Transform(lDifference, this.View) * (float)Math.Sqrt(Radius) / 4.0f;
 
-                _position.X -= lDifference.X;
-                _position.Y += lDifference.Y;
+                _positionChange.X = -lDifference.X;
+                _positionChange.Y = lDifference.Y;
 
                 _pickedRadius = lPicker.PickedRadius;
             }
+
+            _positionChange = Vector2.SmoothStep(_positionChange, Vector2.Zero, gameTime.ElapsedGameTime.Ticks * 11.0f / TimeSpan.TicksPerSecond);
+            _position += _positionChange;
 
             Matrix lMatrix =
                 Matrix.CreateRotationX(_position.Y) *
