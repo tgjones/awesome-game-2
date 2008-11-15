@@ -85,23 +85,22 @@ namespace SD.Core
                         context.Response.OutputStream.Close();
 
                         break;
+                    case "locations":
+                        List<LocationInfo> locations;
+                        locations = new List<LocationInfo>(_connection.GetLocations());
+
+                        foreach (LocationInfo location in locations)
+                        {
+                            _connection.UpdateStockInfo(location);
+                        }
+
+                        XmlHelper.SerialiseLocationList(locations, context.Response.OutputStream);
+
+                        context.Response.OutputStream.Close();
+                        break;
                     default:
                         break;
                 }
-
-                //List<LocationInfo> locations;
-                //locations = new List<LocationInfo>(_connection.GetLocations());
-
-                //foreach (LocationInfo location in locations)
-                //{
-                //    _connection.UpdateStockInfo(location);
-                //}
-
-                //XmlHelper.SerialiseLocationList(locations, context.Response.OutputStream);
-
-                //context.Response.OutputStream.Close();
-
-
             }
             catch (Exception ex)
             {
