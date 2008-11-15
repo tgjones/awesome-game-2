@@ -50,7 +50,7 @@ namespace AwesomeGame2
 		protected override void Initialize()
 		{
 			_camera = new Camera();
-			_camera.Position = new Vector3(10, 10, 10);
+			_camera.Position = new Vector3(0, 10, 10);
 			_camera.LookAt = Vector3.Zero;
 
 			base.Initialize();
@@ -100,7 +100,7 @@ namespace AwesomeGame2
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Draw(GameTime gameTime)
 		{
-			GraphicsDevice.Clear(Color.CornflowerBlue);
+			GraphicsDevice.Clear(Color.Black);
 
 			Matrix[] transforms = new Matrix[_test0.Bones.Count];
 			_test0.CopyAbsoluteBoneTransformsTo(transforms);
@@ -111,6 +111,10 @@ namespace AwesomeGame2
 					effect.World = transforms[mesh.ParentBone.Index];
 					effect.View = _camera.View;
 					effect.Projection = _camera.Projection;
+
+                    Sunlight.ApplyToBasicEffect(effect);
+
+                    effect.SpecularColor = new Vector3();
 				}
 
 				mesh.Draw();
