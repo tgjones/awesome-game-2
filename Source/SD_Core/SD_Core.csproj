@@ -64,11 +64,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Server.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="DatabaseConnection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="sampleTcpUdpClient2.cs" />
-    <Compile Include="sampleTcpUdpServer2.cs" />
     <Compile Include="sd.cs" />
   </ItemGroup>
   <ItemGroup>

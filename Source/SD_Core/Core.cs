@@ -18,9 +18,8 @@ namespace SD.Core
             gameThread.IsBackground = false;
             gameThread.Start();
 
-            var server = new Server("http://192.168.0.103:54321/", @"c:\");
-            Thread serverThread = new Thread(new ThreadStart(Server));
-            serverThread.Start();
+            var server = new Server("http://192.168.0.103:54321/");
+            new System.Threading.Thread(server.Start).Start();
         }
 
         private static void GameProcessor()
