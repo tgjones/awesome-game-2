@@ -69,6 +69,8 @@ namespace SD.Core
                             string[] queries = query.Split('=');
                             if (queries[0] == "id")
                                 players = new List<PlayerInfo>(_connection.GetPlayers(int.Parse(queries[1])));
+                            else if (queries[0] == "email")
+                                players = new List<PlayerInfo>(_connection.GetPlayers(queries[1]));
                             else
                                 players = new List<PlayerInfo>(_connection.GetPlayers());
 
