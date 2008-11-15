@@ -91,6 +91,7 @@
     <Compile Include="ICursorService.cs" />
     <Compile Include="Input\IMouseService.cs" />
     <Compile Include="Input\MouseComponent.cs" />
+    <Compile Include="IPickable.cs" />
     <Compile Include="Mesh.cs" />
     <Compile Include="Picker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

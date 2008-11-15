@@ -73,14 +73,14 @@ namespace AwesomeGame2
 			float closestIntersection = float.MaxValue;
 
 			// Loop over all our models.
-			IEnumerable<Mesh> meshes = this.Game.Components.OfType<Mesh>();
-			foreach (Mesh mesh in meshes)
+			IEnumerable<IPickable> meshes = this.Game.Components.OfType<IPickable>();
+			foreach (IPickable mesh in meshes)
 			{
 				bool insideBoundingSphere;
 				Vector3 vertex1, vertex2, vertex3;
 
 				// Perform the ray to model intersection test.
-				float? intersection = RayIntersectsModel(cursorRay, mesh.Model,
+				float? intersection = RayIntersectsModel(cursorRay, mesh,
 																								 mesh.World,
 																								 out insideBoundingSphere,
 																								 out vertex1, out vertex2,
@@ -122,7 +122,7 @@ namespace AwesomeGame2
 		/// Returns the distance along the ray to the point of intersection, or null
 		/// if there is no intersection.
 		/// </summary>
-		private static float? RayIntersectsModel(Ray ray, Model model, Matrix modelTransform,
+		private static float? RayIntersectsModel(Ray ray, IPickable pickable, Matrix modelTransform,
 																		 out bool insideBoundingSphere,
 																		 out Vector3 vertex1, out Vector3 vertex2,
 																		 out Vector3 vertex3)
@@ -144,20 +144,8 @@ namespace AwesomeGame2
 			ray.Position = Vector3.Transform(ray.Position, inverseTransform);
 			ray.Direction = Vector3.TransformNormal(ray.Direction, inverseTransform);
 
-			// Look up our custom collision data from the Tag property of the model.
-			Dictionary<string, object> tagData = (Dictionary<string, object>) model.Tag;
-
-			if (tagData == null)
-			{
-				throw new InvalidOperationException(
-						"Model.Tag is not set correctly. Make sure your model " +
-						"was built using the custom TrianglePickingProcessor.");
-			}
-
 			// Start off with a fast bounding sphere test.
-			BoundingSphere boundingSphere = (BoundingSphere) tagData["BoundingSphere"];
-
-			if (boundingSphere.Intersects(ray) == null)
+			if (pickable.BoundingSphere.Intersects(ray) == null)
 			{
 				// If the ray does not intersect the bounding sphere, we cannot
 				// possibly have picked this model, so there is no need to even
@@ -177,8 +165,7 @@ namespace AwesomeGame2
 				float? closestIntersection = null;
 
 				// Loop over the vertex data, 3 at a time (3 vertices = 1 triangle).
-				Vector3[] vertices = (Vector3[]) tagData["Vertices"];
-
+				Vector3[] vertices = pickable.Vertices;
 				for (int i = 0; i < vertices.Length; i += 3)
 				{
 					// Perform a ray to triangle intersection test.

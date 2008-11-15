@@ -1,10 +1,11 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace AwesomeGame2
 {
-	public class Mesh : DrawableGameComponent
+	public class Mesh : DrawableGameComponent, IPickable
 	{
 		private string _assetName;
 
@@ -24,6 +25,34 @@ namespace AwesomeGame2
 		{
 			get;
 			set;
+		}
+
+		private Dictionary<string, object> TagData
+		{
+			get
+			{
+				// Look up our custom collision data from the Tag property of the model.
+				Dictionary<string, object> tagData = (Dictionary<string, object>) this.Model.Tag;
+
+				if (tagData == null)
+				{
+					throw new InvalidOperationException(
+							"Model.Tag is not set correctly. Make sure your model " +
+							"was built using the custom TrianglePickingProcessor.");
+				}
+
+				return tagData;
+			}
+		}
+
+		public BoundingSphere BoundingSphere
+		{
+			get { return (BoundingSphere) this.TagData["BoundingSphere"]; }
+		}
+
+		public Vector3[] Vertices
+		{
+			get { return (Vector3[]) this.TagData["Vertices"]; }
 		}
 
 		public Mesh(Game game, string assetName)

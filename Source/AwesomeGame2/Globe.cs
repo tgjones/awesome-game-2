@@ -6,8 +6,10 @@ using Microsoft.Xna.Framework;
 
 namespace AwesomeGame2
 {
-	public class Globe : DrawableGameComponent
+	public class Globe : DrawableGameComponent, IPickable
 	{
+		#region Fields
+
 		private int _slices, _stacks;
 		private Vector3 _centre;
 		private float _longitudeFrom, _longitudeTo;
@@ -15,17 +17,39 @@ namespace AwesomeGame2
 		private float _radius;
 
 		private int _numberOfVertices, _numberOfIndices;
+		private Vector3[] _vertices;
 
 		private Effect _effect;
 		private VertexDeclaration _vertexDeclaration;
 		private VertexBuffer _vertexBuffer;
 		private IndexBuffer _indexBuffer;
 
+		#endregion
+
+		#region Properties
+
 		public Matrix World
 		{
 			get;
 			set;
 		}
+
+		public string Name
+		{
+			get { return "Globe"; }
+		}
+
+		public BoundingSphere BoundingSphere
+		{
+			get { return new BoundingSphere(_centre, _radius); }
+		}
+
+		public Vector3[] Vertices
+		{
+			get { return _vertices; }
+		}
+
+		#endregion
 
 		public Globe(Game game,
 			int slices, int stacks, Vector3 centre,
@@ -46,10 +70,12 @@ namespace AwesomeGame2
 			this.World = Matrix.Identity;
 		}
 
+		#region Methods
+
 		protected override void LoadContent()
 		{
-			CreateVertexBuffer();
-			CreateIndexBuffer();
+			VertexPositionNormalTexture[] vertices = CreateVertexBuffer();
+			CreateIndexBuffer(vertices);
 
 			_effect = this.Game.Content.Load<Effect>(@"Effects\Globe");
 			_vertexDeclaration = new VertexDeclaration(this.GraphicsDevice, VertexPositionNormalTexture.VertexElements);
@@ -60,7 +86,7 @@ namespace AwesomeGame2
 			base.LoadContent();
 		}
 
-		private void CreateVertexBuffer()
+		private VertexPositionNormalTexture[] CreateVertexBuffer()
 		{
 			_numberOfVertices = (_stacks + 1) * (_slices + 1);
 			VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[_numberOfVertices];
@@ -92,13 +118,14 @@ namespace AwesomeGame2
 				vertices.Length,
 				BufferUsage.None);
 			_vertexBuffer.SetData<VertexPositionNormalTexture>(vertices);
+
+			return vertices;
 		}
 
-		private void CreateIndexBuffer()
+		private void CreateIndexBuffer(VertexPositionNormalTexture[] vertices)
 		{
 			List<short> indices = new List<short>();
 
-			int index = 0;
 			for (short lat = 0; lat < _stacks; lat++)
 			{
 				for (short lng = 0; lng <= _slices; lng++)
@@ -123,6 +150,19 @@ namespace AwesomeGame2
 				indicesArray.Length,
 				BufferUsage.None);
 			_indexBuffer.SetData<short>(indicesArray);
+
+			_vertices = new Vector3[(_numberOfIndices - 2) * 3];
+			int index = 0, indexIndex = 0;
+			_vertices[index++] = vertices[indices[indexIndex++]].Position;
+			_vertices[index++] = vertices[indices[indexIndex++]].Position;
+			_vertices[index++] = vertices[indices[indexIndex++]].Position;
+			while (indexIndex < indices.Count)
+			{
+				_vertices[index++] = vertices[indices[indexIndex - 2]].Position;
+				_vertices[index++] = vertices[indices[indexIndex - 1]].Position;
+				_vertices[index++] = vertices[indices[indexIndex - 0]].Position;
+				++indexIndex;
+			}
 		}
 
 		public override void Draw(GameTime gameTime)
@@ -143,5 +183,7 @@ namespace AwesomeGame2
 			}
 			_effect.End();
 		}
+
+		#endregion
 	}
 }
