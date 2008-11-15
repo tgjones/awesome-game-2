@@ -13,6 +13,7 @@ namespace SD.Core
     internal class DatabaseConnection
     {
         MySqlConnection _connection;
+        static object _connectionLock = new object();
 
         #region Constructor and destructor
 
@@ -93,17 +94,18 @@ namespace SD.Core
 
             List<string> players = new List<string>();
 
-            MySqlCommand command = _connection.CreateCommand();
-            command.CommandText = @"select name from players";
-
-            using (MySqlDataReader Reader = command.ExecuteReader())
+            lock (_connectionLock)
             {
-                while (Reader.Read())
+                MySqlCommand command = _connection.CreateCommand();
+                command.CommandText = @"select name from players";
+                using (MySqlDataReader Reader = command.ExecuteReader())
                 {
-                    players.Add(Reader.GetString(0));
+                    while (Reader.Read())
+                    {
+                        players.Add(Reader.GetString(0));
+                    }
                 }
             }
-
             return (players);
         }
 
@@ -117,19 +119,22 @@ namespace SD.Core
 
             List<LocationInfo> locations = new List<LocationInfo>();
 
-            MySqlCommand command = _connection.CreateCommand();
-            command.CommandText = @"SELECT L.id, L.latitude, L.longitude, L.name FROM locations L;";
-
-            using (MySqlDataReader Reader = command.ExecuteReader())
+            lock (_connectionLock)
             {
-                while (Reader.Read())
+                MySqlCommand command = _connection.CreateCommand();
+                command.CommandText = @"SELECT L.id, L.latitude, L.longitude, L.name FROM locations L;";
+
+                using (MySqlDataReader Reader = command.ExecuteReader())
                 {
-                    int id = (int)Reader.GetUInt32(0);
-                    decimal latitude = Reader.GetDecimal(1);
-                    decimal longitude = Reader.GetDecimal(2);
-                    string name = Reader.GetString(3);
-                    LocationInfo locationInfo = new LocationInfo(id, latitude, longitude, name);
-                    locations.Add(locationInfo);
+                    while (Reader.Read())
+                    {
+                        int id = (int)Reader.GetUInt32(0);
+                        decimal latitude = Reader.GetDecimal(1);
+                        decimal longitude = Reader.GetDecimal(2);
+                        string name = Reader.GetString(3);
+                        LocationInfo locationInfo = new LocationInfo(id, latitude, longitude, name);
+                        locations.Add(locationInfo);
+                    }
                 }
             }
 
@@ -146,19 +151,22 @@ namespace SD.Core
 
             List<LocationInfo> locations = new List<LocationInfo>();
 
-            MySqlCommand command = _connection.CreateCommand();
-            command.CommandText = string.Format(@"SELECT L.id, L.latitude, L.longitude, L.name FROM locations L WHERE L.id={0};", query_id);
-
-            using (MySqlDataReader Reader = command.ExecuteReader())
+            lock (_connectionLock)
             {
-                while (Reader.Read())
+                MySqlCommand command = _connection.CreateCommand();
+                command.CommandText = string.Format(@"SELECT L.id, L.latitude, L.longitude, L.name FROM locations L WHERE L.id={0};", query_id);
+
+                using (MySqlDataReader Reader = command.ExecuteReader())
                 {
-                    int id = (int)Reader.GetUInt32(0);
-                    decimal latitude = Reader.GetDecimal(1);
-                    decimal longitude = Reader.GetDecimal(2);
-                    string name = Reader.GetString(3);
-                    LocationInfo locationInfo = new LocationInfo(id, latitude, longitude, name);
-                    locations.Add(locationInfo);
+                    while (Reader.Read())
+                    {
+                        int id = (int)Reader.GetUInt32(0);
+                        decimal latitude = Reader.GetDecimal(1);
+                        decimal longitude = Reader.GetDecimal(2);
+                        string name = Reader.GetString(3);
+                        LocationInfo locationInfo = new LocationInfo(id, latitude, longitude, name);
+                        locations.Add(locationInfo);
+                    }
                 }
             }
 
@@ -178,20 +186,23 @@ namespace SD.Core
             MySqlCommand command = _connection.CreateCommand();
             command.CommandText = @"SELECT P.id, P.email, P.password, P.name, P.joined, P.last_login, P.balance FROM players P;";
 
-            using (MySqlDataReader Reader = command.ExecuteReader())
+            lock (_connectionLock)
             {
-                while (Reader.Read())
+                using (MySqlDataReader Reader = command.ExecuteReader())
                 {
-                    int id = (int)Reader.GetUInt32(0);
-                    string email = Reader.GetString(1);
-                    string password = Reader.GetString(2);
-                    string name = Reader.GetString(3);
-                    DateTime joined = (DateTime)Reader.GetMySqlDateTime(4);
-                    DateTime last_login = (DateTime)Reader.GetMySqlDateTime(5);
-                    int balance = (int)Reader.GetInt32(6);
+                    while (Reader.Read())
+                    {
+                        int id = (int)Reader.GetUInt32(0);
+                        string email = Reader.GetString(1);
+                        string password = Reader.GetString(2);
+                        string name = Reader.GetString(3);
+                        DateTime joined = (DateTime)Reader.GetMySqlDateTime(4);
+                        DateTime last_login = (DateTime)Reader.GetMySqlDateTime(5);
+                        int balance = (int)Reader.GetInt32(6);
 
-                    PlayerInfo playerInfo = new PlayerInfo(id, email, password, name, joined, last_login, balance);
-                    players.Add(playerInfo);
+                        PlayerInfo playerInfo = new PlayerInfo(id, email, password, name, joined, last_login, balance);
+                        players.Add(playerInfo);
+                    }
                 }
             }
 
@@ -208,26 +219,28 @@ namespace SD.Core
 
             List<PlayerInfo> players = new List<PlayerInfo>();
 
-            MySqlCommand command = _connection.CreateCommand();
-            command.CommandText = string.Format(@"SELECT P.id, P.email, P.password, P.name, P.joined, P.last_login, P.balance FROM players P WHERE P.id={0};", query_id);
-
-            using (MySqlDataReader Reader = command.ExecuteReader())
+            lock (_connectionLock)
             {
-                while (Reader.Read())
-                {
-                    int id = (int)Reader.GetUInt32(0);
-                    string email = Reader.GetString(1);
-                    string password = Reader.GetString(2);
-                    string name = Reader.GetString(3);
-                    DateTime joined = (DateTime)Reader.GetMySqlDateTime(4);
-                    DateTime last_login = (DateTime)Reader.GetMySqlDateTime(5);
-                    int balance = (int)Reader.GetInt32(6);
+                MySqlCommand command = _connection.CreateCommand();
+                command.CommandText = string.Format(@"SELECT P.id, P.email, P.password, P.name, P.joined, P.last_login, P.balance FROM players P WHERE P.id={0};", query_id);
 
-                    PlayerInfo playerInfo = new PlayerInfo(id, email, password, name, joined, last_login, balance);
-                    players.Add(playerInfo);
+                using (MySqlDataReader Reader = command.ExecuteReader())
+                {
+                    while (Reader.Read())
+                    {
+                        int id = (int)Reader.GetUInt32(0);
+                        string email = Reader.GetString(1);
+                        string password = Reader.GetString(2);
+                        string name = Reader.GetString(3);
+                        DateTime joined = (DateTime)Reader.GetMySqlDateTime(4);
+                        DateTime last_login = (DateTime)Reader.GetMySqlDateTime(5);
+                        int balance = (int)Reader.GetInt32(6);
+
+                        PlayerInfo playerInfo = new PlayerInfo(id, email, password, name, joined, last_login, balance);
+                        players.Add(playerInfo);
+                    }
                 }
             }
-
             return (players);
         }
 
@@ -244,23 +257,25 @@ namespace SD.Core
             MySqlCommand command = _connection.CreateCommand();
             command.CommandText = string.Format(@"SELECT P.id, P.email, P.password, P.name, P.joined, P.last_login, P.balance FROM players P WHERE P.email='{0}';", query_email);
 
-            using (MySqlDataReader Reader = command.ExecuteReader())
+            lock (_connectionLock)
             {
-                while (Reader.Read())
+                using (MySqlDataReader Reader = command.ExecuteReader())
                 {
-                    int id = (int)Reader.GetUInt32(0);
-                    string email = Reader.GetString(1);
-                    string password = Reader.GetString(2);
-                    string name = Reader.GetString(3);
-                    DateTime joined = (DateTime)Reader.GetMySqlDateTime(4);
-                    DateTime last_login = (DateTime)Reader.GetMySqlDateTime(5);
-                    int balance = (int)Reader.GetInt32(6);
+                    while (Reader.Read())
+                    {
+                        int id = (int)Reader.GetUInt32(0);
+                        string email = Reader.GetString(1);
+                        string password = Reader.GetString(2);
+                        string name = Reader.GetString(3);
+                        DateTime joined = (DateTime)Reader.GetMySqlDateTime(4);
+                        DateTime last_login = (DateTime)Reader.GetMySqlDateTime(5);
+                        int balance = (int)Reader.GetInt32(6);
 
-                    PlayerInfo playerInfo = new PlayerInfo(id, email, password, name, joined, last_login, balance);
-                    players.Add(playerInfo);
+                        PlayerInfo playerInfo = new PlayerInfo(id, email, password, name, joined, last_login, balance);
+                        players.Add(playerInfo);
+                    }
                 }
             }
-
             return (players);
         }
 
@@ -277,23 +292,25 @@ namespace SD.Core
             MySqlCommand command = _connection.CreateCommand();
             command.CommandText = @"SELECT T.id, T.player_id, T.route_id, T.last_moved, T.distance_travelled, T.capacity, T.transport_type_id FROM transporters T;";
 
-            using (MySqlDataReader Reader = command.ExecuteReader())
+            lock (_connectionLock)
             {
-                while (Reader.Read())
+                using (MySqlDataReader Reader = command.ExecuteReader())
                 {
-                    int id = (int)Reader.GetUInt32(0);
-                    int player_id = (int)Reader.GetUInt32(1);
-                    int route_id = (int)Reader.GetUInt32(2);
-                    DateTime last_moved = (DateTime)Reader.GetMySqlDateTime(3);
-                    decimal distance_travelled = Reader.GetDecimal(4);
-                    int capacity = (int)Reader.GetUInt32(5);
-                    int transport_type_id = (int)Reader.GetUInt32(6);
+                    while (Reader.Read())
+                    {
+                        int id = (int)Reader.GetUInt32(0);
+                        int player_id = (int)Reader.GetUInt32(1);
+                        int route_id = (int)Reader.GetUInt32(2);
+                        DateTime last_moved = (DateTime)Reader.GetMySqlDateTime(3);
+                        decimal distance_travelled = Reader.GetDecimal(4);
+                        int capacity = (int)Reader.GetUInt32(5);
+                        int transport_type_id = (int)Reader.GetUInt32(6);
 
-                    TransporterInfo transporterInfo = new TransporterInfo(id, player_id, route_id, last_moved, distance_travelled, capacity, transport_type_id);
-                    transporters.Add(transporterInfo);
+                        TransporterInfo transporterInfo = new TransporterInfo(id, player_id, route_id, last_moved, distance_travelled, capacity, transport_type_id);
+                        transporters.Add(transporterInfo);
+                    }
                 }
             }
-
             return (transporters);
         }
 
@@ -309,40 +326,43 @@ namespace SD.Core
             MySqlCommand command = _connection.CreateCommand();
             command.CommandText = string.Format(@"SELECT S.commodity_id, S.quantity, S.price FROM location_stock S WHERE S.location_id={0};", location.Id);
 
-            using (MySqlDataReader Reader = command.ExecuteReader())
+            lock (_connectionLock)
             {
-                while (Reader.Read())
+                using (MySqlDataReader Reader = command.ExecuteReader())
                 {
-                    int id = (int)Reader.GetUInt32(0);
-                    int quantity = (int)Reader.GetUInt32(1);
-                    int price = (int)Reader.GetUInt32(2);
-                    StockInfo stock = location.Stocks.Find(n => (n.ResourceType == (ResourceEnum)id));
-                    if (stock == null)
+                    while (Reader.Read())
                     {
-                        if (quantity > 0)
+                        int id = (int)Reader.GetUInt32(0);
+                        int quantity = (int)Reader.GetUInt32(1);
+                        int price = (int)Reader.GetUInt32(2);
+                        StockInfo stock = location.Stocks.Find(n => (n.ResourceType == (ResourceEnum)id));
+                        if (stock == null)
                         {
-                            stock = new StockInfo((ResourceEnum)id, quantity, price);
-                            location.Stocks.Add(stock);
-                            Console.WriteLine("\nNew stock of {0} at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
+                            if (quantity > 0)
+                            {
+                                stock = new StockInfo((ResourceEnum)id, quantity, price);
+                                location.Stocks.Add(stock);
+                                Console.WriteLine("\nNew stock of {0} at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
+                            }
                         }
-                    }
-                    else
-                    {
-                        if (quantity == 0)
+                        else
                         {
-                            location.Stocks.Remove(stock);
-                            Console.WriteLine("\nNo more {0} at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
-                        }
+                            if (quantity == 0)
+                            {
+                                location.Stocks.Remove(stock);
+                                Console.WriteLine("\nNo more {0} at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
+                            }
 
-                        if (stock.Quantity != quantity)
-                        {
-                            stock.Quantity = quantity;
-                            Console.WriteLine("\nQuantity of {0} changed at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
-                        }
-                        if (stock.UnitPrice != price)
-                        {
-                            stock.UnitPrice = price;
-                            Console.WriteLine("\nPrice of {0} changed at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
+                            if (stock.Quantity != quantity)
+                            {
+                                stock.Quantity = quantity;
+                                Console.WriteLine("\nQuantity of {0} changed at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
+                            }
+                            if (stock.UnitPrice != price)
+                            {
+                                stock.UnitPrice = price;
+                                Console.WriteLine("\nPrice of {0} changed at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
+                            }
                         }
                     }
                 }
@@ -358,39 +378,42 @@ namespace SD.Core
             if (!IsConnected)
                 throw new Exception("Not connected to database.");
 
-            MySqlCommand command = _connection.CreateCommand();
-            //command.CommandText = string.Format(@"SELECT S.commodity_id, S.quantity, S.price FROM location_stock S WHERE S.location_id={0};", location.Id);
-            command.CommandText = string.Format(@"SELECT S.commodity_id, S.quantity, S.bought_price FROM transporter_stock S WHERE S.transporter_id={0};", transporter.Id);
-
-            using (MySqlDataReader Reader = command.ExecuteReader())
+            lock (_connectionLock)
             {
-                while (Reader.Read())
-                {
-                    int id = (int)Reader.GetUInt32(0);
-                    int quantity = (int)Reader.GetUInt32(1);
-                    int price = (int)Reader.GetUInt32(2);
-                    StockInfo stock = transporter.Stocks.Find(n => (n.ResourceType == (ResourceEnum)id));
-                    if (stock == null)
-                    {
-                        if (quantity > 0)
-                        {
-                            stock = new StockInfo((ResourceEnum)id, quantity, price);
-                            transporter.Stocks.Add(stock);
-                            //Console.WriteLine("\nNew stock of {0} at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
-                        }
-                    }
-                    else
-                    {
-                        if (quantity == 0)
-                        {
-                            transporter.Stocks.Remove(stock);
-                            //Console.WriteLine("\nNo more {0} at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
-                        }
+                MySqlCommand command = _connection.CreateCommand();
+                //command.CommandText = string.Format(@"SELECT S.commodity_id, S.quantity, S.price FROM location_stock S WHERE S.location_id={0};", location.Id);
+                command.CommandText = string.Format(@"SELECT S.commodity_id, S.quantity, S.bought_price FROM transporter_stock S WHERE S.transporter_id={0};", transporter.Id);
 
-                        if (stock.Quantity != quantity)
+                using (MySqlDataReader Reader = command.ExecuteReader())
+                {
+                    while (Reader.Read())
+                    {
+                        int id = (int)Reader.GetUInt32(0);
+                        int quantity = (int)Reader.GetUInt32(1);
+                        int price = (int)Reader.GetUInt32(2);
+                        StockInfo stock = transporter.Stocks.Find(n => (n.ResourceType == (ResourceEnum)id));
+                        if (stock == null)
                         {
-                            stock.Quantity = quantity;
-                            //Console.WriteLine("\nQuantity of {0} changed at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
+                            if (quantity > 0)
+                            {
+                                stock = new StockInfo((ResourceEnum)id, quantity, price);
+                                transporter.Stocks.Add(stock);
+                                //Console.WriteLine("\nNew stock of {0} at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
+                            }
+                        }
+                        else
+                        {
+                            if (quantity == 0)
+                            {
+                                transporter.Stocks.Remove(stock);
+                                //Console.WriteLine("\nNo more {0} at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
+                            }
+
+                            if (stock.Quantity != quantity)
+                            {
+                                stock.Quantity = quantity;
+                                //Console.WriteLine("\nQuantity of {0} changed at {1}.", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), location.Name);
+                            }
                         }
                     }
                 }
@@ -413,28 +436,36 @@ namespace SD.Core
                 stockList[resource].LocationId = location_id;
             }
 
+            MySqlCommand command;
+
             // get the quantity, maximum and prices for each commodity from location_stock
-            MySqlCommand command = _connection.CreateCommand();
-            command.CommandText = @"select commodity_id, quantity, maximum, price from location_stock where location_id = " + location_id + ";";
-            using (MySqlDataReader Reader = command.ExecuteReader())
+            lock (_connectionLock)
             {
-                while (Reader.Read())
+                command = _connection.CreateCommand();
+                command.CommandText = @"select commodity_id, quantity, maximum, price from location_stock where location_id = " + location_id + ";";
+                using (MySqlDataReader Reader = command.ExecuteReader())
                 {
-                    ResourceEnum resource = (ResourceEnum)(int)Reader.GetUInt32("commodity_id");
-                    stockList[resource].Quantity = (int)Reader.GetUInt32("quantity");
-                    stockList[resource].Maximum = (int)Reader.GetUInt32("maximum");
-                    stockList[resource].UnitPrice = (int)Reader.GetUInt32("price");
+                    while (Reader.Read())
+                    {
+                        ResourceEnum resource = (ResourceEnum)(int)Reader.GetUInt32("commodity_id");
+                        stockList[resource].Quantity = (int)Reader.GetUInt32("quantity");
+                        stockList[resource].Maximum = (int)Reader.GetUInt32("maximum");
+                        stockList[resource].UnitPrice = (int)Reader.GetUInt32("price");
+                    }
                 }
             }
 
             // get the process ids for this location from location_process
             List<int> processList = new List<int>();
-            command.CommandText = @"select id as process_id from location_process where location_id = " + location_id + ";";
-            using (MySqlDataReader Reader = command.ExecuteReader())
+            lock (_connectionLock)
             {
-                while (Reader.Read())
+                command.CommandText = @"select id as process_id from location_process where location_id = " + location_id + ";";
+                using (MySqlDataReader Reader = command.ExecuteReader())
                 {
-                    processList.Add((int)Reader.GetUInt32("process_id"));
+                    while (Reader.Read())
+                    {
+                        processList.Add((int)Reader.GetUInt32("process_id"));
+                    }
                 }
             }
 
@@ -442,27 +473,32 @@ namespace SD.Core
             foreach (int process_id in processList)
             {
                 // consumption
-                command.CommandText = @"select commodity_id, quantity from process_consumption where process_id = " + process_id + ";";
-                using (MySqlDataReader Reader = command.ExecuteReader())
+                lock (_connectionLock)
                 {
-                    while (Reader.Read())
+                    command.CommandText = @"select commodity_id, quantity from process_consumption where process_id = " + process_id + ";";
+                    using (MySqlDataReader Reader = command.ExecuteReader())
                     {
-                        ResourceEnum resource = (ResourceEnum)(int)Reader.GetUInt32("commodity_id");
-                        stockList[resource].Consumes += (int)Reader.GetUInt32("quantity");
+                        while (Reader.Read())
+                        {
+                            ResourceEnum resource = (ResourceEnum)(int)Reader.GetUInt32("commodity_id");
+                            stockList[resource].Consumes += (int)Reader.GetUInt32("quantity");
+                        }
                     }
                 }
                 // production
-                command.CommandText = @"select commodity_id, quantity from process_production where process_id = " + process_id + ";";
-                using (MySqlDataReader Reader = command.ExecuteReader())
+                lock (_connectionLock)
                 {
-                    while (Reader.Read())
+                    command.CommandText = @"select commodity_id, quantity from process_production where process_id = " + process_id + ";";
+                    using (MySqlDataReader Reader = command.ExecuteReader())
                     {
-                        ResourceEnum resource = (ResourceEnum)(int)Reader.GetUInt32("commodity_id");
-                        stockList[resource].Produces += (int)Reader.GetUInt32("quantity");
+                        while (Reader.Read())
+                        {
+                            ResourceEnum resource = (ResourceEnum)(int)Reader.GetUInt32("commodity_id");
+                            stockList[resource].Produces += (int)Reader.GetUInt32("quantity");
+                        }
                     }
                 }
             }
-
             return stockList.Values.ToList();
         }
 
@@ -479,14 +515,17 @@ namespace SD.Core
 
             // get a list of locations that are overdue to produce
             Dictionary<int, int> overdueList = new Dictionary<int, int>();  // process_id, location_id
-            command.CommandText = @"select id as process_id, location_id from location_process where (DATE_ADD(last_produced, INTERVAL `interval` SECOND) < NOW())";
-            using (MySqlDataReader Reader = command.ExecuteReader())
+            lock (_connectionLock)
             {
-                while (Reader.Read())
+                command.CommandText = @"select id as process_id, location_id from location_process where (DATE_ADD(last_produced, INTERVAL `interval` SECOND) < NOW())";
+                using (MySqlDataReader Reader = command.ExecuteReader())
                 {
-                    int process_id = (int)Reader.GetUInt32("process_id");
-                    int location_id = (int)Reader.GetUInt32("location_id");
-                    overdueList.Add(process_id, location_id);
+                    while (Reader.Read())
+                    {
+                        int process_id = (int)Reader.GetUInt32("process_id");
+                        int location_id = (int)Reader.GetUInt32("location_id");
+                        overdueList.Add(process_id, location_id);
+                    }
                 }
             }
 
@@ -499,84 +538,93 @@ namespace SD.Core
                 processInfo.Location_id = overdueItem.Value;
 
                 // get the resources consumed
-                command.CommandText = @"select commodity_id, quantity from process_consumption where process_id = " + processInfo.Process_id + ";";
-                using (MySqlDataReader Reader = command.ExecuteReader())
+                lock (_connectionLock)
                 {
-                    while (Reader.Read())
+                    command.CommandText = @"select commodity_id, quantity from process_consumption where process_id = " + processInfo.Process_id + ";";
+                    using (MySqlDataReader Reader = command.ExecuteReader())
                     {
-                        int commodity_id = (int)Reader.GetUInt32("commodity_id");
-                        StockProcessInfo stockInfo = processInfo.GetStockProcessInfo((ResourceEnum)commodity_id);
-                        stockInfo.Consumed = (int)Reader.GetUInt32("quantity");
+                        while (Reader.Read())
+                        {
+                            int commodity_id = (int)Reader.GetUInt32("commodity_id");
+                            StockProcessInfo stockInfo = processInfo.GetStockProcessInfo((ResourceEnum)commodity_id);
+                            stockInfo.Consumed = (int)Reader.GetUInt32("quantity");
+                        }
                     }
                 }
+
                 // get the resources produced
-                command.CommandText = @"select commodity_id, quantity from process_production where process_id = " + processInfo.Process_id + ";";
-                using (MySqlDataReader Reader = command.ExecuteReader())
+                lock (_connectionLock)
                 {
-                    while (Reader.Read())
+                    command.CommandText = @"select commodity_id, quantity from process_production where process_id = " + processInfo.Process_id + ";";
+                    using (MySqlDataReader Reader = command.ExecuteReader())
                     {
-                        int commodity_id = (int)Reader.GetUInt32("commodity_id");
-                        StockProcessInfo stockInfo = processInfo.GetStockProcessInfo((ResourceEnum)commodity_id);
-                        stockInfo.Produced = (int)Reader.GetUInt32("quantity");
+                        while (Reader.Read())
+                        {
+                            int commodity_id = (int)Reader.GetUInt32("commodity_id");
+                            StockProcessInfo stockInfo = processInfo.GetStockProcessInfo((ResourceEnum)commodity_id);
+                            stockInfo.Produced = (int)Reader.GetUInt32("quantity");
+                        }
                     }
                 }
 
                 // begin transaction
-                command.CommandText = "start transaction;";
-                command.ExecuteNonQuery();
-
-                // get the current level of stock
-                command.CommandText = @"select commodity_id, quantity, maximum from location_stock where location_id = " + processInfo.Location_id + ";";
-                using (MySqlDataReader Reader = command.ExecuteReader())
+                lock (_connectionLock)
                 {
-                    while (Reader.Read())
+                    command.CommandText = "start transaction;";
+                    command.ExecuteNonQuery();
+
+                    // get the current level of stock
+                    command.CommandText = @"select commodity_id, quantity, maximum from location_stock where location_id = " + processInfo.Location_id + ";";
+                    using (MySqlDataReader Reader = command.ExecuteReader())
                     {
-                        int commodity_id = (int)Reader.GetUInt32("commodity_id");
-                        StockProcessInfo stockInfo = processInfo.GetStockProcessInfo((ResourceEnum)commodity_id);
-                        stockInfo.CurrentLevel = (int)Reader.GetUInt32("quantity");
-                        stockInfo.Maximum = (int)Reader.GetUInt32("maximum");
+                        while (Reader.Read())
+                        {
+                            int commodity_id = (int)Reader.GetUInt32("commodity_id");
+                            StockProcessInfo stockInfo = processInfo.GetStockProcessInfo((ResourceEnum)commodity_id);
+                            stockInfo.CurrentLevel = (int)Reader.GetUInt32("quantity");
+                            stockInfo.Maximum = (int)Reader.GetUInt32("maximum");
+                        }
                     }
-                }
 
-                // Do we have the required resources?
-                bool canProcess = true;
-                foreach (KeyValuePair<ResourceEnum, StockProcessInfo> processItem in processInfo)
-                {
-                    if (!processItem.Value.CanProcess)
+                    // Do we have the required resources?
+                    bool canProcess = true;
+                    foreach (KeyValuePair<ResourceEnum, StockProcessInfo> processItem in processInfo)
                     {
-                        canProcess = false;
-                        break;
+                        if (!processItem.Value.CanProcess)
+                        {
+                            canProcess = false;
+                            break;
+                        }
                     }
-                }
 
-                if (canProcess)
-                {
-                    Console.WriteLine("\n\nConsumption/Production process activated at location: " + processInfo.Location_id);
-
-                    foreach (KeyValuePair<ResourceEnum,StockProcessInfo> processItem in processInfo)
+                    if (canProcess)
                     {
-                        // process to get the new stock levels
-                        Console.Write("\nResource processed: " + processItem.Key);
-                        Console.Write(" level before: " + processItem.Value.CurrentLevel);
-                        processItem.Value.Process();
-                        Console.Write(" level after: " + processItem.Value.CurrentLevel);
-                        
-                        command.CommandText = @"update location_stock " +
-                            " set quantity = " + processItem.Value.CurrentLevel +
-                            " where commodity_id = " + (int)processItem.Key +
-                            " and location_id = " + processInfo.Location_id + ";";
+                        Console.WriteLine("\n\nConsumption/Production process activated at location: " + processInfo.Location_id);
+
+                        foreach (KeyValuePair<ResourceEnum, StockProcessInfo> processItem in processInfo)
+                        {
+                            // process to get the new stock levels
+                            Console.Write("\nResource processed: " + processItem.Key);
+                            Console.Write(" level before: " + processItem.Value.CurrentLevel);
+                            processItem.Value.Process();
+                            Console.Write(" level after: " + processItem.Value.CurrentLevel);
+
+                            command.CommandText = @"update location_stock " +
+                                " set quantity = " + processItem.Value.CurrentLevel +
+                                " where commodity_id = " + (int)processItem.Key +
+                                " and location_id = " + processInfo.Location_id + ";";
+                            command.ExecuteNonQuery();
+                        }
+
+                        // set the timestamp for next production
+                        command.CommandText = @"update location_process set last_produced = NOW() where id = " + processInfo.Process_id + ";";
                         command.ExecuteNonQuery();
                     }
-                    
-                    // set the timestamp for next production
-                    command.CommandText = @"update location_process set last_produced = NOW() where id = " + processInfo.Process_id + ";";
+
+                    //end translation
+                    command.CommandText = "commit";
                     command.ExecuteNonQuery();
                 }
-
-                //end translation
-                command.CommandText = "commit";
-                command.ExecuteNonQuery();
-
             }
         }
 
@@ -682,38 +730,45 @@ namespace SD.Core
 
             // get a list of all locations
             List<int> locationList = new List<int>();
-            command.CommandText = @"select id as location_id from locations;";
-
-            using (MySqlDataReader Reader = command.ExecuteReader())
+            lock (_connectionLock)
             {
-                while (Reader.Read())
+                command.CommandText = @"select id as location_id from locations;";
+
+                using (MySqlDataReader Reader = command.ExecuteReader())
                 {
-                    int location_id = (int)Reader.GetInt32("location_id");
-                    locationList.Add(location_id);
+                    while (Reader.Read())
+                    {
+                        int location_id = (int)Reader.GetInt32("location_id");
+                        locationList.Add(location_id);
+                    }
                 }
             }
 
             // process each location in turn
             foreach (int location_id in locationList)
             {
-                command.CommandText = "start transaction";
-                command.ExecuteNonQuery();
-
-                foreach (StockFullInfo stockInfo in GetStockInfo(location_id))
+                lock (_connectionLock)
                 {
-                    int oldPrice = stockInfo.UnitPrice;
-                    stockInfo.UpdatePrice(interestRate);
-                    if (oldPrice != stockInfo.UnitPrice)
-                    {
-                        command.CommandText = "update location_stock set price = " + stockInfo.UnitPrice +
-                                              " where location_id = " + stockInfo.LocationId +
-                                              " and commodity_id = " + (int)stockInfo.ResourceType + ";";
-                        command.ExecuteNonQuery();
-                    }
-                }
 
-                command.CommandText = "commit";
-                command.ExecuteNonQuery();
+                    command.CommandText = "start transaction";
+                    command.ExecuteNonQuery();
+
+                    foreach (StockFullInfo stockInfo in GetStockInfo(location_id))
+                    {
+                        int oldPrice = stockInfo.UnitPrice;
+                        stockInfo.UpdatePrice(interestRate);
+                        if (oldPrice != stockInfo.UnitPrice)
+                        {
+                            command.CommandText = "update location_stock set price = " + stockInfo.UnitPrice +
+                                                  " where location_id = " + stockInfo.LocationId +
+                                                  " and commodity_id = " + (int)stockInfo.ResourceType + ";";
+                            command.ExecuteNonQuery();
+                        }
+                    }
+
+                    command.CommandText = "commit";
+                    command.ExecuteNonQuery();
+                }
             }
         }
 

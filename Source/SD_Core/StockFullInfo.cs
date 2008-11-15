@@ -30,24 +30,26 @@ namespace SD.Core
 
             // from 0 to 1
             decimal stockLevel = Quantity / Maximum;
-            // demand (+ve when we need more)
             int targetLevel = Maximum / 2;
             int distanceToTarget = targetLevel - Quantity;
 
             decimal demand;
             decimal supply;
+
+            // demand (+ve when we need more)
             if (Consumes == 0)
                 demand = -1;
             else
-                demand = distanceToTarget / Consumes;
+                demand = (distanceToTarget - (3 * Consumes)) / Consumes;
+
             // surpless (+ve when we don't have much)
             if (Produces == 0)
                 supply = -1;
             else
-                supply = distanceToTarget / Produces;
+                supply = (distanceToTarget - (3 * Produces)) / Produces;
 
             // factor for supply and demand
-            decimal sd = (supply + demand) * 0.0001M;
+            decimal sd = (supply + demand) * 0.00001M;
             currentPrice = currentPrice + (UnitPrice * sd);
 
             Console.WriteLine(ResourceType + " at " + LocationId + "\tsd={0:F0}\toldPrice={1:C}\tnewPrice={2:C}", supply + demand, UnitPrice, currentPrice);
