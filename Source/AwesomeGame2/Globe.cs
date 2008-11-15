@@ -171,7 +171,7 @@ namespace AwesomeGame2
 			_effect.Parameters["WorldViewProjection"].SetValue(this.World * camera.View * camera.Projection);
 
 			this.GraphicsDevice.VertexDeclaration = _vertexDeclaration;
-
+            
 			_effect.Begin(SaveStateMode.SaveState);
 			foreach (EffectPass pass in _effect.CurrentTechnique.Passes)
 			{

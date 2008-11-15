@@ -346,7 +346,7 @@ namespace AwesomeGame2
 
 				// Reset renderstates to their default values.
 				renderState.FillMode = FillMode.Solid;
-				renderState.CullMode = CullMode.CullCounterClockwiseFace;
+				renderState.CullMode = CullMode.None;
 				renderState.DepthBufferEnable = true;
 			}
 

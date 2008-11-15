@@ -55,10 +55,13 @@ namespace AwesomeGame2
 			Input.MouseComponent mouse = new Input.MouseComponent(this);
 			this.Services.AddService(typeof(Input.IMouseService), mouse);
 			this.Components.Add(mouse);
-			Globe sphere = new Globe(this, 100, 100, Vector3.Zero, -180, 180, -90, 90, 2);
-			this.Components.Add(sphere);
 
-			this.Components.Add(new Starfield(this, _camera, 1500));
+            this.Components.Add(new Sun(this, 20.0f, 90.0f));
+            //this.Components.Add(new Sun(this, 0.0f, 1000.0f));
+            this.Components.Add(new Starfield(this, _camera, 1500));
+
+            Globe sphere = new Globe(this, 100, 100, Vector3.Zero, -180, 180, -90, 90, 2);
+			this.Components.Add(sphere);
 
 			Picker picker = new Picker(this);
             this.Services.AddService(typeof(Picker), picker);

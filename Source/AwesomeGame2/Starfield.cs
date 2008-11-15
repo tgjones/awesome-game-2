@@ -64,10 +64,8 @@ namespace AwesomeGame2
         {
             // Retrieve graphicsdevice
             GraphicsDevice graphicsDevice = ((IGraphicsDeviceService)this.Game.Services.GetService(typeof(IGraphicsDeviceService))).GraphicsDevice;
-            {
-                graphicsDevice.RenderState.DepthBufferEnable = true;
-                graphicsDevice.RenderState.CullMode = CullMode.None;
-            }
+            graphicsDevice.RenderState.DepthBufferEnable = true;
+            graphicsDevice.RenderState.CullMode = CullMode.None;
 
             // Set world, view and projection matrices
             basicEffect.World = Matrix.Identity;
