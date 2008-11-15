@@ -85,10 +85,12 @@ namespace SD.Shared
                         )
                     );
 
-            using (XmlWriter writer = XmlWriter.Create(stream))
-            {
-                tree.WriteTo(writer);
-            }
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            XmlWriter writer = XmlWriter.Create(stream, settings);
+            tree.WriteTo(writer);
+            writer.Flush();
+
         }
 
     }
