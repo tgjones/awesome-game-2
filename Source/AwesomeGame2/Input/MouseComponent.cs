@@ -21,7 +21,12 @@ namespace AwesomeGame2.Input
             get { return _currentMouseState.ScrollWheelValue - _previousMouseState.ScrollWheelValue; }
         }
 
-		public override void Update(GameTime gameTime)
+        public bool RightClickPressed
+        {
+            get { return _currentMouseState.RightButton == ButtonState.Pressed; }
+        }
+
+        public override void Update(GameTime gameTime)
 		{
 			_previousMouseState = _currentMouseState;
             _currentMouseState = Mouse.GetState();

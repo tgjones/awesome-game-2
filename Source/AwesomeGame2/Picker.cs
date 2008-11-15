@@ -20,17 +20,34 @@ namespace AwesomeGame2
 		// Store the name of the model underneath the cursor (or null if there is none).
 		private string pickedModelName;
 
-		// Vertex array that stores exactly which triangle was picked.
+        // Vertex array that stores exactly which triangle was picked.
+        private VertexPositionColor[] pickedRadius =
+        {
+            new VertexPositionColor(Vector3.Zero, Color.Tomato),
+            new VertexPositionColor(Vector3.Zero, Color.Tomato),
+        };
+
+        // Vertex array that stores exactly which triangle was picked.
 		private VertexPositionColor[] pickedTriangle =
-    {
-        new VertexPositionColor(Vector3.Zero, Color.Magenta),
-        new VertexPositionColor(Vector3.Zero, Color.Magenta),
-        new VertexPositionColor(Vector3.Zero, Color.Magenta),
-    };
+        {
+            new VertexPositionColor(Vector3.Zero, Color.Magenta),
+            new VertexPositionColor(Vector3.Zero, Color.Magenta),
+            new VertexPositionColor(Vector3.Zero, Color.Magenta),
+        };
 
 		// Effect and vertex declaration for drawing the picked triangle.
 		private BasicEffect lineEffect;
 		private VertexDeclaration lineVertexDeclaration;
+
+        public Vector3 PickedRadius
+        {
+            get
+            {
+                Vector3 lOutput = pickedRadius[1].Position;
+                lOutput.Normalize();
+                return lOutput;
+            }
+        }
 
 		public Picker(Game game)
 			: base(game)
@@ -78,6 +95,7 @@ namespace AwesomeGame2
 			{
 				bool insideBoundingSphere;
 				Vector3 vertex1, vertex2, vertex3;
+                pickedRadius[1].Position = Vector3.Zero;
 
 				// Perform the ray to model intersection test.
 				float? intersection = RayIntersectsModel(cursorRay, mesh,
@@ -107,6 +125,9 @@ namespace AwesomeGame2
 						pickedTriangle[0].Position = vertex1;
 						pickedTriangle[1].Position = vertex2;
 						pickedTriangle[2].Position = vertex3;
+
+                        // Store intersection point positions so we can display the picked radius
+                        pickedRadius[1].Position = cursorRay.Direction * 2000.0f;
 					}
 				}
 			}
@@ -317,8 +338,8 @@ namespace AwesomeGame2
 				// Draw the triangle.
 				device.VertexDeclaration = lineVertexDeclaration;
 
-				device.DrawUserPrimitives(PrimitiveType.TriangleList,
-																	pickedTriangle, 0, 1);
+				device.DrawUserPrimitives(PrimitiveType.TriangleList, pickedTriangle, 0, 1);
+                //device.DrawUserPrimitives(PrimitiveType.LineList, pickedRadius, 0, 1);
 
 				lineEffect.CurrentTechnique.Passes[0].End();
 				lineEffect.End();

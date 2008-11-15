@@ -74,7 +74,7 @@ technique Technique1
 		PixelShader = compile ps_2_0 PixelShaderFunction();
 	}
 	
-	pass Pass1
+	/*pass Pass1
 	{
 		FillMode = WIREFRAME;
 		AlphaBlendEnable = true;
@@ -84,5 +84,5 @@ technique Technique1
 		
 		VertexShader = compile vs_2_0 VertexShaderFunction();
 		PixelShader = compile ps_2_0 SimplePixelShaderFunction();
-	}
+	}*/
 }

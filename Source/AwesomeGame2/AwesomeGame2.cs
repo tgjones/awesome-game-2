@@ -49,21 +49,20 @@ namespace AwesomeGame2
 		protected override void Initialize()
 		{
 			_camera = new Camera(this);
-			_camera.Position = new Vector3(0, 4, 4);
-			_camera.LookAt = Vector3.Zero;
 			this.Services.AddService(typeof(ICameraService), _camera);
 			this.Components.Add(_camera);
 
 			Input.MouseComponent mouse = new Input.MouseComponent(this);
 			this.Services.AddService(typeof(Input.IMouseService), mouse);
 			this.Components.Add(mouse);
-			Globe sphere = new Globe(this, 100, 100, Vector3.Zero, -180, 180, -90, 90, 1);
+			Globe sphere = new Globe(this, 100, 100, Vector3.Zero, -180, 180, -90, 90, 2);
 			this.Components.Add(sphere);
 
 			this.Components.Add(new Starfield(this, _camera, 1500));
 
 			Picker picker = new Picker(this);
-			this.Components.Add(picker);
+            this.Services.AddService(typeof(Picker), picker);
+            this.Components.Add(picker);
 
 			Cursor cursor = new Cursor(this, this.Content) { DrawOrder = 1000 };
 			this.Services.AddService(typeof(ICursorService), cursor);
