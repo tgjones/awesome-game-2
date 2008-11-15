@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using MySql.Data.MySqlClient;
 
 using SD.Shared;
@@ -45,6 +46,7 @@ namespace SD.Core
         #endregion // Properties
 
         #region Methods
+        #region Connect and disconnect
         /// <summary>
         /// Establish a connection with the database
         /// </summary>
@@ -79,6 +81,7 @@ namespace SD.Core
                 _connection.Close();
             }
         }
+        #endregion Connect and disconnect
 
         /// <summary>
         /// Retrieve a list of player names from the database.
@@ -310,6 +313,203 @@ namespace SD.Core
                         }
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Check through the locations, consuming and producing where possible.
+        /// </summary>
+        internal void ProductionCycle()
+        {
+            if (!IsConnected)
+                throw new Exception("Not connected to database.");
+
+            List<string> players = new List<string>();
+
+            MySqlCommand command = _connection.CreateCommand();
+
+            // get a list of locations that are overdue to produce
+            Dictionary<int, int> overdueList = new Dictionary<int, int>();  // process_id, location_id
+            command.CommandText = @"select id as process_id, location_id from location_process where (DATE_ADD(last_produced, INTERVAL `interval` SECOND) < NOW())";
+            using (MySqlDataReader Reader = command.ExecuteReader())
+            {
+                while (Reader.Read())
+                {
+                    int process_id = (int)Reader.GetUInt32("process_id");
+                    int location_id = (int)Reader.GetUInt32("location_id");
+                    overdueList.Add(process_id, location_id);
+                }
+            }
+
+            // check each location to see if they have the required resources and space, and produce if possible
+            foreach (KeyValuePair<int, int> overdueItem in overdueList)
+            {
+                ConsumeProduceProcess processInfo = new ConsumeProduceProcess();
+                
+                processInfo.Process_id = overdueItem.Key;
+                processInfo.Location_id = overdueItem.Value;
+
+                // get the resources consumed
+                command.CommandText = @"select commodity_id, quantity from process_consumption where process_id = " + processInfo.Process_id + ";";
+                using (MySqlDataReader Reader = command.ExecuteReader())
+                {
+                    while (Reader.Read())
+                    {
+                        int commodity_id = (int)Reader.GetUInt32("commodity_id");
+                        StockProcessInfo stockInfo = processInfo.GetStockProcessInfo((ResourceEnum)commodity_id);
+                        stockInfo.Consumed = (int)Reader.GetUInt32("quantity");
+                    }
+                }
+                // get the resources produced
+                command.CommandText = @"select commodity_id, quantity from process_production where process_id = " + processInfo.Process_id + ";";
+                using (MySqlDataReader Reader = command.ExecuteReader())
+                {
+                    while (Reader.Read())
+                    {
+                        int commodity_id = (int)Reader.GetUInt32("commodity_id");
+                        StockProcessInfo stockInfo = processInfo.GetStockProcessInfo((ResourceEnum)commodity_id);
+                        stockInfo.Produced = (int)Reader.GetUInt32("quantity");
+                    }
+                }
+
+                // begin transaction
+                command.CommandText = "start transaction;";
+                command.ExecuteNonQuery();
+
+                // get the current level of stock
+                command.CommandText = @"select commodity_id, quantity, maximum from location_stock where location_id = " + processInfo.Location_id + ";";
+                using (MySqlDataReader Reader = command.ExecuteReader())
+                {
+                    while (Reader.Read())
+                    {
+                        int commodity_id = (int)Reader.GetUInt32("commodity_id");
+                        StockProcessInfo stockInfo = processInfo.GetStockProcessInfo((ResourceEnum)commodity_id);
+                        stockInfo.CurrentLevel = (int)Reader.GetUInt32("quantity");
+                        stockInfo.Maximum = (int)Reader.GetUInt32("maximum");
+                    }
+                }
+
+                // Do we have the required resources?
+                bool canProcess = true;
+                foreach (KeyValuePair<ResourceEnum, StockProcessInfo> processItem in processInfo)
+                {
+                    if (!processItem.Value.CanProcess)
+                    {
+                        canProcess = false;
+                        break;
+                    }
+                }
+
+                if (canProcess)
+                {
+                    Console.WriteLine("\n\nConsumption/Production process activated at location: " + processInfo.Location_id);
+
+                    foreach (KeyValuePair<ResourceEnum,StockProcessInfo> processItem in processInfo)
+                    {
+                        // process to get the new stock levels
+                        Console.Write("\nResource processed: " + processItem.Key);
+                        Console.Write(" level before: " + processItem.Value.CurrentLevel);
+                        processItem.Value.Process();
+                        Console.Write(" level after: " + processItem.Value.CurrentLevel);
+                        
+                        command.CommandText = @"update location_stock " +
+                            " set quantity = " + processItem.Value.CurrentLevel +
+                            " where commodity_id = " + (int)processItem.Key + ";";
+                        command.ExecuteNonQuery();
+                    }
+                    
+                    // set the timestamp for next production
+                    command.CommandText = @"update location_process set last_produced = NOW() where id = " + processInfo.Process_id + ";";
+                    command.ExecuteNonQuery();
+                }
+
+                //end translation
+                command.CommandText = "commit";
+                command.ExecuteNonQuery();
+
+            }
+
+
+        }
+        /// <summary>
+        ///  Struct for holding data about a production process
+        /// </summary>
+        class ConsumeProduceProcess : IEnumerable<KeyValuePair<ResourceEnum, StockProcessInfo>>
+        {
+            internal int Process_id =-1;
+            internal int Location_id =-1;
+            Dictionary<ResourceEnum, StockProcessInfo> stock = new Dictionary<ResourceEnum, StockProcessInfo>();
+
+            internal StockProcessInfo GetStockProcessInfo(ResourceEnum resource)
+            {
+                if (!stock.ContainsKey(resource))
+                {
+                    stock.Add(resource, new StockProcessInfo());
+                }
+                return stock[resource];
+            }
+
+            #region IEnumerable<KeyValuePair<ResourceEnum, StockProcessInfo>> Members
+
+            public IEnumerator<KeyValuePair<ResourceEnum, StockProcessInfo>> GetEnumerator()
+            {
+                return stock.GetEnumerator();
+            }
+
+            #endregion
+
+            #region IEnumerable Members
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            {
+                return stock.GetEnumerator();
+            }
+
+            #endregion
+        }
+        class StockProcessInfo
+        {
+            internal int CurrentLevel;// = 0;
+            internal int Maximum;// = 0;
+            internal int Consumed;// = 0;
+            internal int Produced;// = 0;
+
+            /// <summary>
+            /// Check the stock info to see if this resource is ok to produce/consume.
+            /// Returns true if there are sufficient resources to consume and sufficient space for production.
+            /// </summary>
+            internal bool CanProcess
+            {
+                get
+                {
+                    if (CurrentLevel > Maximum)
+                        throw new Exception("The current level of stock exceeds the maximum.  Something has gone wrong.");
+                    if (Produced > Maximum)
+                        throw new Exception("Cannot produce more than the maximum number of goods.  Something has gone wrong.");
+                    if (Consumed > Maximum)
+                        throw new Exception("Cannot consume more than the maximum number of goods.  Something has gone wrong.");
+                    if (Consumed > 0 && Produced > 0)
+                        throw new Exception("Cannot consume and produce the same resource in one process.");
+
+                    if (CurrentLevel < 0) throw new ArgumentOutOfRangeException("CurrentLevel", "Cannot be less than 0");
+                    if (Consumed < 0) throw new ArgumentOutOfRangeException("Consumed", "Cannot be less than 0");
+                    if (Produced < 0) throw new ArgumentOutOfRangeException("Produced", "Cannot be less than 0");
+
+                    if (CurrentLevel < Consumed) return false;
+                    if (Produced + CurrentLevel > Maximum) return false;
+                    return true;
+                }
+            }
+
+            /// <summary>
+            /// Do the consumption and production cycle to adjust the current level
+            /// </summary>
+            internal void Process()
+            {
+                if (!CanProcess) 
+                    throw new Exception("Cannot process these resources.  You should have checked with CanProcess.");
+
+                CurrentLevel = CurrentLevel + Produced - Consumed;
             }
         }
 

@@ -58,11 +58,12 @@ namespace SD.Core
                 _startTime = (DateTime.Now.Ticks / 1000L);
                 // The main thread for looping around processing game logic
 
-                foreach (LocationInfo location in _locations)
-                {
-                    database.UpdateStockInfo(location);
+                database.ProductionCycle();
+                //foreach (LocationInfo location in _locations)
+                //{
+                //    database.UpdateStockInfo(location);
 
-                }
+                //}
                 Console.Write('.');
 
                 // sleep for the rest of this second (assuming there is some remaining
