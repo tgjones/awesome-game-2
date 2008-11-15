@@ -172,7 +172,7 @@ namespace AwesomeGame2
 
 			this.GraphicsDevice.VertexDeclaration = _vertexDeclaration;
 
-			_effect.Begin();
+			_effect.Begin(SaveStateMode.SaveState);
 			foreach (EffectPass pass in _effect.CurrentTechnique.Passes)
 			{
 				pass.Begin();

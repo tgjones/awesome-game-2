@@ -65,7 +65,7 @@ namespace AwesomeGame2
 			Picker picker = new Picker(this);
 			this.Components.Add(picker);
 
-			Cursor cursor = new Cursor(this, this.Content);
+			Cursor cursor = new Cursor(this, this.Content) { DrawOrder = 1000 };
 			this.Services.AddService(typeof(ICursorService), cursor);
 			this.Components.Add(cursor);
 
