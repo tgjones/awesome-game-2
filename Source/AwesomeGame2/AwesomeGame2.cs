@@ -66,7 +66,7 @@ namespace AwesomeGame2
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
 			// TODO: use this.Content to load your game content here
-			_test0 = this.Content.Load<Model>("test0");
+			_test0 = this.Content.Load<Model>("Globe");
 		}
 
 		/// <summary>
