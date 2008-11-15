@@ -10,12 +10,17 @@ namespace AwesomeGame2
 {
     public class Camera : GameComponent, ICameraService
 	{
-        private float _radius;
         private float _targetRadius;
         private Vector3 _pickedRadius;
         private Vector2 _position;
 
 		#region Properties
+
+        public float Radius
+        {
+            get;
+            set;
+        }
 
         public Vector3 LookAt
 		{
@@ -85,7 +90,7 @@ namespace AwesomeGame2
 			this.NearPlaneDistance = 1.0f;
 			this.FarPlaneDistance = 10000.0f;
 
-            this._targetRadius = this._radius = 100.0f;
+            this._targetRadius = this.Radius = 6.0f;
 		}
 
 		#endregion
@@ -105,7 +110,7 @@ namespace AwesomeGame2
                 _targetRadius = 6.0f; // furthest zoom radius
 
             // Update the zoom
-            _radius += Math.Min(gameTime.ElapsedGameTime.Ticks * 2.0f, TimeSpan.TicksPerSecond) * (_targetRadius - _radius) / TimeSpan.TicksPerSecond; // lag speed
+            Radius += Math.Min(gameTime.ElapsedGameTime.Ticks * 2.0f, TimeSpan.TicksPerSecond) * (_targetRadius - Radius) / TimeSpan.TicksPerSecond; // lag speed
             
             // Update the dragged position
             if (!lMouseService.RightClickPressed || float.IsNaN(lPicker.PickedRadius.Length()))
@@ -119,7 +124,7 @@ namespace AwesomeGame2
             else
             {
                 Vector3 lDifference = lPicker.PickedRadius - _pickedRadius;
-                lDifference = Vector3.Transform(lDifference, this.View) * (float)Math.Sqrt(_radius) / 4.0f;
+                lDifference = Vector3.Transform(lDifference, this.View) * (float)Math.Sqrt(Radius) / 4.0f;
 
                 _position.X -= lDifference.X;
                 _position.Y += lDifference.Y;
@@ -131,7 +136,7 @@ namespace AwesomeGame2
                 Matrix.CreateRotationX(_position.Y) *
                 Matrix.CreateRotationY(_position.X);
 
-            Vector3 lPosition = Vector3.Transform(Vector3.Backward * _radius, lMatrix);
+            Vector3 lPosition = Vector3.Transform(Vector3.Backward * Radius, lMatrix);
             Vector3 lUp = Vector3.Transform(Vector3.Up, lMatrix);
             
             this.View = Matrix.CreateLookAt(lPosition, this.LookAt, lUp);

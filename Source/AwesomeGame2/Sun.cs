@@ -18,10 +18,14 @@ namespace AwesomeGame2
     {
         private float BlurIntensity;
 
+        private Matrix[] worldMatrix;
+
         private SpriteBatch spriteBatch;
         private Model SunModel;
-        private Effect fxAlbedo;
-        private Effect fxLayers;
+        private Effect fxAlbedo1;
+        private Effect fxAlbedo2;
+        private Effect fxLayers1;
+        private Effect fxLayers2;
         private Effect fxHDR;
         private Effect fxLinearFilter;
         private Effect fxGaussianFilter;
@@ -35,7 +39,6 @@ namespace AwesomeGame2
         private TextureCube texLayer2;
         private Texture2D texGradient;
 
-        private Matrix worldMatrix;
         private Vector3 vecRotationAxis;
         private Vector3 vecLayer1Axis;
         private Vector3 vecLayer2Axis;
@@ -45,7 +48,8 @@ namespace AwesomeGame2
 
         public Sun(Game game, float xOffset, float blurIntensity) : base(game)
         {
-            worldMatrix = Matrix.CreateTranslation(xOffset, 0.0f, 0.0f);
+            worldMatrix = new Matrix[2];
+            worldMatrix[0] = Matrix.CreateTranslation(xOffset, 0.0f, 0.0f);
             BlurIntensity = blurIntensity;
         }
 
@@ -79,9 +83,11 @@ namespace AwesomeGame2
             spriteBatch = new SpriteBatch( GraphicsDevice );
 
             // all effects we use
-            fxAlbedo = this.Game.Content.Load<Effect>( "Effects\\DiffuseColor" );
-            fxLayers = this.Game.Content.Load<Effect>( "Effects\\SunLayerCube" );
-            fxHDR = this.Game.Content.Load<Effect>( "Effects\\SunLayerCombine" );
+            fxAlbedo1 = this.Game.Content.Load<Effect>( "Effects\\DiffuseColor" );
+            fxAlbedo2 = this.Game.Content.Load<Effect>("Effects\\DiffuseColor2");
+            fxLayers1 = this.Game.Content.Load<Effect>("Effects\\SunLayerCube");
+            fxLayers2 = this.Game.Content.Load<Effect>("Effects\\SunLayerCube2");
+            fxHDR = this.Game.Content.Load<Effect>("Effects\\SunLayerCombine");
             fxLinearFilter = this.Game.Content.Load<Effect>( "Effects\\LinearFilter" );
             fxGaussianFilter = this.Game.Content.Load<Effect>( "Effects\\GaussianFilter" );
 
@@ -131,6 +137,9 @@ namespace AwesomeGame2
                 fLayer2Angle += 0.0008f;
             else 
                 fLayer2Angle = 0f;
+
+            Camera camera = this.Game.Services.GetService<ICameraService>() as Camera;
+            worldMatrix[1] = Matrix.CreateScale(5.0f / camera.Radius);
 
             base.Update( gameTime );
         }
@@ -219,45 +228,43 @@ namespace AwesomeGame2
             GraphicsDevice.RenderState.SourceBlend = Blend.One;
             GraphicsDevice.RenderState.DestinationBlend = Blend.One;
 
-            foreach ( ModelMesh mesh in SunModel.Meshes )
+            for (int i = 0; i < worldMatrix.Length; i++)
             {
-                foreach ( ModelMeshPart part in mesh.MeshParts )
-                {
-                    part.Effect = fxLayers;
-                } // foreach
-            } // foreach            
-            
-            Matrix World = Matrix.CreateFromAxisAngle(vecLayer1Axis, fLayer1Angle) * worldMatrix;
+                Matrix World = Matrix.CreateFromAxisAngle(vecLayer1Axis, fLayer1Angle) * worldMatrix[i];
 
-            foreach ( ModelMesh mesh in SunModel.Meshes )
-            {
-                foreach ( Effect effect in mesh.Effects )
+                foreach (ModelMesh mesh in SunModel.Meshes)
                 {
-                    effect.CurrentTechnique = effect.Techniques[ 0 ];
-                    effect.Parameters[ "gTexture" ].SetValue( texLayer1 );
-                    effect.Parameters[ "World" ].SetValue( World );
-                    effect.Parameters[ "View" ].SetValue( camera.View );
-                    effect.Parameters[ "Projection" ].SetValue( camera.Projection );
-                    effect.Parameters[ "WorldIT" ].SetValue( Matrix.Invert( World ) );
+                    foreach ( ModelMeshPart part in mesh.MeshParts )
+                        part.Effect = i == 0 ? fxLayers1 : fxLayers2;
+
+                    foreach (Effect effect in mesh.Effects)
+                    {
+                        effect.CurrentTechnique = effect.Techniques[0];
+                        effect.Parameters["gTexture"].SetValue(texLayer1);
+                        effect.Parameters["World"].SetValue(World);
+                        effect.Parameters["View"].SetValue(camera.View);
+                        effect.Parameters["Projection"].SetValue(camera.Projection);
+                        effect.Parameters["WorldIT"].SetValue(Matrix.Invert(World));
+                    } // foreach
+                    mesh.Draw();
                 } // foreach
-                mesh.Draw( );
-            } // foreach
 
-            World = Matrix.CreateFromAxisAngle(vecLayer2Axis, fLayer2Angle) * worldMatrix;
+                World = Matrix.CreateFromAxisAngle(vecLayer2Axis, fLayer2Angle) * worldMatrix[i];
 
-            foreach ( ModelMesh mesh in SunModel.Meshes )
-            {
-                foreach ( Effect effect in mesh.Effects )
+                foreach (ModelMesh mesh in SunModel.Meshes)
                 {
-                    effect.CurrentTechnique = effect.Techniques[ 0 ];
-                    effect.Parameters[ "gTexture" ].SetValue( texLayer2 );
-                    effect.Parameters[ "World" ].SetValue( World );
-                    effect.Parameters[ "View" ].SetValue( camera.View );
-                    effect.Parameters[ "Projection" ].SetValue( camera.Projection );
-                    effect.Parameters[ "WorldIT" ].SetValue( Matrix.Invert( World ) );
+                    foreach (Effect effect in mesh.Effects)
+                    {
+                        effect.CurrentTechnique = effect.Techniques[0];
+                        effect.Parameters["gTexture"].SetValue(texLayer2);
+                        effect.Parameters["World"].SetValue(World);
+                        effect.Parameters["View"].SetValue(camera.View);
+                        effect.Parameters["Projection"].SetValue(camera.Projection);
+                        effect.Parameters["WorldIT"].SetValue(Matrix.Invert(World));
+                    } // foreach
+                    mesh.Draw();
                 } // foreach
-                mesh.Draw( );
-            } // foreach
+            }
 
             GraphicsDevice.RenderState.DepthBufferEnable = true;
             GraphicsDevice.RenderState.AlphaBlendEnable = false;
@@ -271,29 +278,27 @@ namespace AwesomeGame2
             GraphicsDevice.SetRenderTarget(0, rtColor);
             GraphicsDevice.Clear(Color.Black);
 
-            foreach ( ModelMesh mesh in SunModel.Meshes )
+            for (int i = 0; i < worldMatrix.Length; i++)
             {
-                foreach ( ModelMeshPart part in mesh.MeshParts )
-                {
-                    part.Effect = fxAlbedo;
-                } // foreach
-            } // foreach
+                Matrix World = Matrix.CreateFromAxisAngle(vecRotationAxis, fRotationAngle) * worldMatrix[i];
 
-            Matrix World = Matrix.CreateFromAxisAngle(vecRotationAxis, fRotationAngle) * worldMatrix;
-
-            foreach ( ModelMesh mesh in SunModel.Meshes )
-            {
-                foreach ( Effect effect in mesh.Effects )
+                foreach (ModelMesh mesh in SunModel.Meshes)
                 {
-                    effect.CurrentTechnique = effect.Techniques[ 0 ];
-                    effect.Parameters[ "gAlbedoMap" ].SetValue( texSun );
-                    effect.Parameters[ "gWorldXf" ].SetValue( World );
-                    effect.Parameters[ "gViewXf" ].SetValue( camera.View );
-                    effect.Parameters[ "gProjectionXf" ].SetValue( camera.Projection );
-                    effect.Parameters[ "gWorldITXf" ].SetValue( Matrix.Invert( World ) );
+                    foreach ( ModelMeshPart part in mesh.MeshParts )
+                        part.Effect = i == 0 ? fxAlbedo1 : fxAlbedo2;
+
+                    foreach (Effect effect in mesh.Effects)
+                    {
+                        effect.CurrentTechnique = effect.Techniques[0];
+                        effect.Parameters["gAlbedoMap"].SetValue(texSun);
+                        effect.Parameters["gWorldXf"].SetValue(World);
+                        effect.Parameters["gViewXf"].SetValue(camera.View);
+                        effect.Parameters["gProjectionXf"].SetValue(camera.Projection);
+                        effect.Parameters["gWorldITXf"].SetValue(Matrix.Invert(World));
+                    } // foreach
+                    mesh.Draw();
                 } // foreach
-                mesh.Draw( );
-            } // foreach
+            }
 
             GraphicsDevice.SetRenderTarget(0, null);
         }

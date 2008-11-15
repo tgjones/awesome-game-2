@@ -37,7 +37,7 @@ namespace AwesomeGame2
 		private AwesomeGame2()
 		{
 			_graphics = new GraphicsDeviceManager(this);
-			Content.RootDirectory = "Content";
+            Content.RootDirectory = "Content";
 		}
 
 		/// <summary>
@@ -57,11 +57,8 @@ namespace AwesomeGame2
 			this.Components.Add(mouse);
 
             this.Components.Add(new Sun(this, 20.0f, 90.0f));
-            //this.Components.Add(new Sun(this, 0.0f, 1000.0f));
             this.Components.Add(new Starfield(this, _camera, 1500));
-
-            Globe sphere = new Globe(this, 100, 100, Vector3.Zero, -180, 180, -90, 90, 2);
-			this.Components.Add(sphere);
+			this.Components.Add(new Globe(this, 100, 100, Vector3.Zero, -180, 180, -90, 90, 2));
 
 			Picker picker = new Picker(this);
             this.Services.AddService(typeof(Picker), picker);
