@@ -10,13 +10,14 @@ namespace AwesomeGame2
     public class Camera : GameComponent, ICameraService
 	{
         private float _targetRadius;
+        private Vector3 _position;
 
 		#region Properties
 
 		public Vector3 Position
 		{
-			get;
-			set;
+			get { return _position; }
+            set { _position = value; _targetRadius = _position.Length(); }
 		}
 
 		public Vector3 LookAt
@@ -103,17 +104,17 @@ namespace AwesomeGame2
         public override void Update(GameTime gameTime)
         {
             Input.IMouseService lMouseService = this.Game.Services.GetService<Input.IMouseService>();
+            System.Diagnostics.Debug.WriteLine(lMouseService.ScrollWheelValueChange);
 
             // Update the zoom target level
-            _targetRadius -= 0.03f * lMouseService.ScrollWheelValueChange; // sensitivity
+            _targetRadius -= 0.05f * lMouseService.ScrollWheelValueChange; // sensitivity
             if (_targetRadius < 3.0f)
                 _targetRadius = 3.0f; // closest zoom radius
 
             // Update the zoom
-            float lRadius = this.Position.Length() + Math.Min(gameTime.ElapsedRealTime.Milliseconds / 250.0f, 1.0f) * (_targetRadius - this.Position.Length()); // lag speed
-            Vector3 lPosition = this.Position;
-            lPosition.Normalize();
-            this.Position = lPosition * lRadius;
+            float lRadius = _position.Length() + Math.Min(gameTime.ElapsedRealTime.Milliseconds / 250.0f, 1.0f) * (_targetRadius - _position.Length()); // lag speed
+            _position.Normalize();
+            _position *= lRadius;
 
 			this.View = Matrix.CreateLookAt(this.Position, this.LookAt, this.Up);
 			this.Projection = Matrix.CreatePerspectiveFieldOfView(this.FieldOfView,

@@ -49,7 +49,7 @@ namespace AwesomeGame2
 		protected override void Initialize()
 		{
 			_camera = new Camera(this);
-			_camera.Position = new Vector3(0, 10, 10);
+			_camera.Position = new Vector3(0, 4, 4);
 			_camera.LookAt = Vector3.Zero;
 			this.Services.AddService(typeof(ICameraService), _camera);
             this.Components.Add(_camera);
