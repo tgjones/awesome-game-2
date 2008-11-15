@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-
+using DbLinq.MySql;
 using MySql.Data.MySqlClient;
 
 using SD.Shared;
