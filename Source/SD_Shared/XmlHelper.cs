@@ -32,7 +32,16 @@ namespace SD.Shared
             internal const string joined = "joined";
             internal const string last_login = "last_login";
             internal const string balance = "balance";
-
+            internal const string transporters = "tranporters";
+            internal const string transporter = "tranporter";
+            internal const string player_id = "player_id";
+            internal const string route_id = "route_id";
+            internal const string last_moved = "last_moved";
+            internal const string distance_travelled = "distance_travelled";
+            internal const string commodity_id = "commodity_id";
+            internal const string capacity = "capacity";
+            internal const string load = "load";
+            internal const string transport_type_id = "transport_type_id";
         }
 
         public static List<LocationInfo> DeserialiseLocationList(Stream stream)
@@ -116,6 +125,34 @@ namespace SD.Shared
                         new XAttribute(xNames.joined, l.Joined),
                         new XAttribute(xNames.last_login, l.LastLogin),
                         new XAttribute(xNames.balance, l.Balance)
+                        )
+                    );
+
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            XmlWriter writer = XmlWriter.Create(stream, settings);
+            tree.WriteTo(writer);
+            writer.Flush();
+        }
+
+        public static void SerialiseTransporterList(List<TransporterInfo> transporterList, Stream stream)
+        {
+            if (transporterList == null)
+                return;
+
+            XElement tree = new XElement(xNames.transporters,
+                from l in transporterList
+                select
+                    new XElement(xNames.transporter,
+                        new XAttribute(xNames.id, l.Id),
+                        new XAttribute(xNames.player_id, l.PlayerId),
+                        new XAttribute(xNames.route_id, l.RouteId),
+                        new XAttribute(xNames.last_moved, l.LastMoved),
+                        new XAttribute(xNames.distance_travelled, l.DistanceTravelled),
+                        new XAttribute(xNames.commodity_id, l.CommodityId),
+                        new XAttribute(xNames.capacity, l.Capacity),
+                        new XAttribute(xNames.load, l.Load),
+                        new XAttribute(xNames.transport_type_id, l.TransportTypeId)
                         )
                     );
 

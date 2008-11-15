@@ -265,6 +265,41 @@ namespace SD.Core
         }
 
         /// <summary>
+        /// Retrieve a list of all transporters from the database
+        /// </summary>
+        internal IEnumerable<TransporterInfo> GetTransporters()
+        {
+            if (!IsConnected)
+                throw new Exception("Not connected to database.");
+
+            List<TransporterInfo> transporters = new List<TransporterInfo>();
+
+            MySqlCommand command = _connection.CreateCommand();
+            command.CommandText = @"SELECT T.id, T.player_id, T.route_id, T.last_moved, T.distance_travelled, T.commodity_id, T.capacity, T.load, T.transport_type_id FROM transporters T;";
+
+            using (MySqlDataReader Reader = command.ExecuteReader())
+            {
+                while (Reader.Read())
+                {
+                    int id = (int)Reader.GetUInt32(0);
+                    int player_id = (int)Reader.GetUInt32(1);
+                    int route_id = (int)Reader.GetUInt32(2);
+                    DateTime last_moved = (DateTime)Reader.GetMySqlDateTime(3);
+                    decimal distance_travelled = Reader.GetDecimal(4);
+                    int commodity_id = (int)Reader.GetUInt32(5);
+                    int capacity = (int)Reader.GetUInt32(6);
+                    int load = (int)Reader.GetUInt32(7);
+                    int transport_type_id = (int)Reader.GetUInt32(8);
+
+                    TransporterInfo transporterInfo = new TransporterInfo(id, player_id, route_id, last_moved, distance_travelled, commodity_id, capacity, load, transport_type_id);
+                    transporters.Add(transporterInfo);
+                }
+            }
+
+            return (transporters);
+        }
+
+        /// <summary>
         /// Update the stock levels for a location from the database.
         /// </summary>
         /// <param name="location">The location to update the stock levels for.</param>

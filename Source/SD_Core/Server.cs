@@ -110,6 +110,20 @@ namespace SD.Core
 
                         context.Response.OutputStream.Close();
                         break;
+                    case "transporters":
+                        List<TransporterInfo> transporters;
+                        
+                        transporters = new List<TransporterInfo>(_connection.GetTransporters());
+
+                        //foreach (LocationInfo location in locations)
+                        //{
+                        //    _connection.UpdateStockInfo(location);
+                        //}
+
+                        XmlHelper.SerialiseTransporterList(transporters, context.Response.OutputStream);
+
+                        context.Response.OutputStream.Close();
+                        break;
                     default:
                         break;
                 }
