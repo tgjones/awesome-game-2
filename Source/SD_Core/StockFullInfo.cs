@@ -28,39 +28,58 @@ namespace SD.Core
 
             decimal currentPrice = UnitPrice;
 
-            // from 0 to 1
-            decimal stockLevel = Quantity / Maximum;
-            int targetLevel = Maximum / 2;
-            int distanceToTarget = targetLevel - Quantity;
+            decimal Rmax = 1000;    //max resource price
+            decimal Rmin = 20;      //min resource price
 
-            decimal demand;
-            decimal supply;
+            decimal stockLevel = ((decimal)Quantity / (decimal)Maximum);
+            decimal newPrice = Rmax -  stockLevel * (Rmax - Rmin);
 
-            // demand (+ve when we need more)
-            if (Consumes == 0)
-                demand = -1;
+            if (currentPrice == (int)newPrice)
+            {
+                Console.WriteLine(ResourceType + " at " + LocationId + "\toldPrice={0:C} (unchanged)", currentPrice);
+            }
             else
-                demand = (distanceToTarget - (3 * Consumes)) / Consumes;
+            {
+                Console.WriteLine(ResourceType + " at " + LocationId + "\toldPrice={0:C}\tnewPrice={1:C}", currentPrice, newPrice);
+            }
 
-            // surpless (+ve when we don't have much)
-            if (Produces == 0)
-                supply = -1;
-            else
-                supply = (distanceToTarget - (3 * Produces)) / Produces;
+            UnitPrice = (int)newPrice;
 
-            // factor for supply and demand
-            decimal sd = (supply + demand) * 0.00001M;
-            currentPrice = currentPrice + (UnitPrice * sd);
+            #region Supply and demand model (deprecated)
+            //decimal stockLevel = Quantity / Maximum;
+            //int targetLevel = Maximum / 2;
+            //int distanceToTarget = targetLevel - Quantity;
 
-            Console.WriteLine(ResourceType + " at " + LocationId + "\tsd={0:F0}\toldPrice={1:C}\tnewPrice={2:C}", supply + demand, UnitPrice, currentPrice);
+            //decimal demand;
+            //decimal supply;
 
-            // inflation
-            //currentPrice = currentPrice + ((decimal)UnitPrice * interestRate);
+            //// demand (+ve when we need more)
+            //if (Consumes == 0)
+            //    demand = -1;
+            //else
+            //    demand = (distanceToTarget - (3 * Consumes)) / Consumes;
 
-            UnitPrice = (int)Math.Round(currentPrice, 0, MidpointRounding.ToEven);
+            //// surpless (+ve when we don't have much)
+            //if (Produces == 0)
+            //    supply = -1;
+            //else
+            //    supply = (distanceToTarget - (3 * Produces)) / Produces;
 
-            if (UnitPrice < 1) 
-                UnitPrice = 1;
+            //// factor for supply and demand
+            //decimal sd = (supply + demand) * 0.00001M;
+            //currentPrice = currentPrice + (UnitPrice * sd);
+
+
+            //// inflation
+            ////currentPrice = currentPrice + ((decimal)UnitPrice * interestRate);
+
+            //UnitPrice = (int)Math.Round(currentPrice, 0, MidpointRounding.ToEven);
+
+            //if (UnitPrice < 1) 
+            //    UnitPrice = 1;
+
+            //Console.WriteLine(ResourceType + " at " + LocationId + "\tsd={0:F0}\toldPrice={1:C}\tnewPrice={2:C}", supply + demand, UnitPrice, currentPrice);
+            #endregion //Supply and demand model (deprecated)
 
         }
     }
