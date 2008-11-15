@@ -51,40 +51,34 @@ namespace SD.Core
             #endregion //Get initial data from database
 
             bool _exitThread = false;
-            long _startTime = 0;
-            long _financialYear = 0;
+            DateTime _startTime;
+            DateTime _financialYear = DateTime.Now;
 
             while (!_exitThread)
             {
-                _startTime = (DateTime.Now.Ticks / 1000L);
+                _startTime = DateTime.Now;
                 // The main thread for looping around processing game logic
 
                 // production happens on every cycle
                 database.ProductionCycle();
 
-                // financial "year" occurs every minute (60 * 1000 ms)
+                // financial "year" occurs every minute
                 if (_financialYear < _startTime)
                 {
                     // process the next financial cycle
                     database.UpdatePrices();
                     // and set the earliest the next financial year can occur
-                    _financialYear = _startTime + (60 * 1000);
+                    _financialYear = _startTime.AddMinutes(1);
                 }
 
-
-                //foreach (LocationInfo location in _locations)
-                //{
-                //    database.UpdateStockInfo(location);
-
-                //}
                 Console.Write('.');
 
                 // sleep for the rest of this second (assuming there is some remaining)
-                long timeRemaining = 1000 - ((DateTime.Now.Ticks / 1000L) - _startTime); // e-7 s
+                TimeSpan timeRemaining = _startTime.AddSeconds(1).Subtract(DateTime.Now);// new TimeSpan(0, 0, 1);//1000 - ((DateTime.Now.Ticks / 1000L) - _startTime); // e-7 s
                 
-                if (timeRemaining > 0)
+                if (timeRemaining.Milliseconds > 0)
                 {
-                    Thread.Sleep((int)timeRemaining);
+                    Thread.Sleep(timeRemaining.Milliseconds);
                 }
             }
 
