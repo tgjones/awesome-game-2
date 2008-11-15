@@ -87,7 +87,19 @@ namespace SD.Core
                         break;
                     case "locations":
                         List<LocationInfo> locations;
-                        locations = new List<LocationInfo>(_connection.GetLocations());
+
+                        if (query.Length > 0)
+                        {
+                            string[] queries = query.Split('=');
+                            if (queries[0] == "id")
+                                locations = new List<LocationInfo>(_connection.GetLocations(int.Parse(queries[1])));
+                            else
+                                locations = new List<LocationInfo>(_connection.GetLocations());
+                        }
+                        else
+                        {
+                            locations = new List<LocationInfo>(_connection.GetLocations());
+                        }
 
                         foreach (LocationInfo location in locations)
                         {

@@ -134,6 +134,35 @@ namespace SD.Core
         }
 
         /// <summary>
+        /// Retrieve a location from the database by id
+        /// </summary>
+        internal IEnumerable<LocationInfo> GetLocations(int query_id)
+        {
+            if (!IsConnected)
+                throw new Exception("Not connected to database.");
+
+            List<LocationInfo> locations = new List<LocationInfo>();
+
+            MySqlCommand command = _connection.CreateCommand();
+            command.CommandText = string.Format(@"SELECT L.id, L.latitude, L.longitude, L.name FROM locations L WHERE L.id={0};", query_id);
+
+            using (MySqlDataReader Reader = command.ExecuteReader())
+            {
+                while (Reader.Read())
+                {
+                    int id = (int)Reader.GetUInt32(0);
+                    decimal latitude = Reader.GetDecimal(1);
+                    decimal longitude = Reader.GetDecimal(2);
+                    string name = Reader.GetString(3);
+                    LocationInfo locationInfo = new LocationInfo(id, latitude, longitude, name);
+                    locations.Add(locationInfo);
+                }
+            }
+
+            return (locations);
+        }
+
+        /// <summary>
         /// Retrieve a list of all players from the database
         /// </summary>
         internal IEnumerable<PlayerInfo> GetPlayers()
