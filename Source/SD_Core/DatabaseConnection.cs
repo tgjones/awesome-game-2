@@ -167,7 +167,7 @@ namespace SD.Core
         }
 
         /// <summary>
-        /// Retrieve a list of all players from the database
+        /// Retrieve a player from the database by id
         /// </summary>
         internal IEnumerable<PlayerInfo> GetPlayers(int query_id)
         {
@@ -178,6 +178,39 @@ namespace SD.Core
 
             MySqlCommand command = _connection.CreateCommand();
             command.CommandText = string.Format(@"SELECT P.id, P.email, P.password, P.name, P.joined, P.last_login, P.balance FROM players P WHERE P.id={0};", query_id);
+
+            using (MySqlDataReader Reader = command.ExecuteReader())
+            {
+                while (Reader.Read())
+                {
+                    int id = (int)Reader.GetUInt32(0);
+                    string email = Reader.GetString(1);
+                    string password = Reader.GetString(2);
+                    string name = Reader.GetString(3);
+                    DateTime joined = (DateTime)Reader.GetMySqlDateTime(4);
+                    DateTime last_login = (DateTime)Reader.GetMySqlDateTime(5);
+                    int balance = (int)Reader.GetInt32(6);
+
+                    PlayerInfo playerInfo = new PlayerInfo(id, email, password, name, joined, last_login, balance);
+                    players.Add(playerInfo);
+                }
+            }
+
+            return (players);
+        }
+
+        /// <summary>
+        /// Retrieve a player from the database by email
+        /// </summary>
+        internal IEnumerable<PlayerInfo> GetPlayers(string query_email)
+        {
+            if (!IsConnected)
+                throw new Exception("Not connected to database.");
+
+            List<PlayerInfo> players = new List<PlayerInfo>();
+
+            MySqlCommand command = _connection.CreateCommand();
+            command.CommandText = string.Format(@"SELECT P.id, P.email, P.password, P.name, P.joined, P.last_login, P.balance FROM players P WHERE P.email='{0}';", query_email);
 
             using (MySqlDataReader Reader = command.ExecuteReader())
             {
