@@ -105,7 +105,7 @@ namespace AwesomeGame2
                 _targetRadius = 6.0f; // furthest zoom radius
 
             // Update the zoom
-            _radius += Math.Min(gameTime.ElapsedRealTime.Milliseconds / 250.0f, 1.0f) * (_targetRadius - _radius); // lag speed
+            _radius += Math.Min(gameTime.ElapsedGameTime.Ticks * 2.0f, TimeSpan.TicksPerSecond) * (_targetRadius - _radius) / TimeSpan.TicksPerSecond; // lag speed
             
             // Update the dragged position
             if (!lMouseService.RightClickPressed || float.IsNaN(lPicker.PickedRadius.Length()))
