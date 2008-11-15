@@ -6,7 +6,9 @@ using System.Threading;
 
 using MySql.Data.MySqlClient;
 
-namespace SD_Core
+using SD.Shared;
+
+namespace SD.Core
 {
     public class Core
     {
@@ -15,31 +17,30 @@ namespace SD_Core
             Thread gameThread = new Thread(new ThreadStart(GameProcessor));
             gameThread.IsBackground = false;
             gameThread.Start();
-
         }
 
         private static void GameProcessor()
         {
-            MySqlConnection _connection;
+            DatabaseConnection database = new DatabaseConnection();
+            database.Connect();
 
-            #region InitialiseDatabase
-            Console.Write("Connecting to database...");
-            string MyConString = "SERVER=192.168.0.103;" +
-                "DATABASE=sd;" +
-                "UID=sduser;" +
-                "PASSWORD=sdpass;";
-            _connection = new MySqlConnection(MyConString);
-            _connection.Open();
-            if (_connection.State == System.Data.ConnectionState.Open)
+            List<LocationInfo> _locations;
+
+            #region Get initial data from database
+            _locations = database.GetLocations().ToList();
+
+            foreach (LocationInfo location in _locations)
             {
-                Console.Write(" Connected!\n");
+                database.UpdateStockInfo(location);
+
+                Console.WriteLine(location.Name);
+                foreach (StockInfo stock in location.Stocks)
+                {
+                    Console.WriteLine(" - {0}:\t{1}\t{2}", Enum.GetName(typeof(ResourceEnum), stock.ResourceType), stock.Quantity, stock.UnitPrice);
+                }
             }
-            else
-            {
-                Console.WriteLine("Failed to connect to database.");
-                return;
-            }
-            #endregion
+
+            #endregion //Get initial data from database
 
             bool _exitThread = false;
             long _startTime = 0;
@@ -49,8 +50,11 @@ namespace SD_Core
                 _startTime = (DateTime.Now.Ticks / 1000L);
                 // The main thread for looping around processing game logic
 
-                foreach (string player in getPlayerList(_connection))
-                    Console.WriteLine(player);
+                foreach (LocationInfo location in _locations)
+                {
+                    database.UpdateStockInfo(location);
+                }
+                Console.Write('.');
 
                 // sleep for the rest of this second (assuming there is some remaining
                 long timeRemaining = 1000 - ((DateTime.Now.Ticks / 1000L) - _startTime); // e-7 s
@@ -61,30 +65,7 @@ namespace SD_Core
                 }
             }
 
-            #region Close database connection
-            _connection.Close();
-            #endregion
-
         }
 
-        static IEnumerable<String> getPlayerList(MySqlConnection connection)
-        {
-            List<string> players;
-
-            MySqlCommand command = connection.CreateCommand();
-            command.CommandText = @"select name from players";
-
-            using (MySqlDataReader Reader = command.ExecuteReader())
-            {
-                players = new List<string>();
-
-                while (Reader.Read())
-                {
-                    players.Add(Reader.GetString(0));
-                }
-            }
-
-            return (players);
-        }
     }
 }

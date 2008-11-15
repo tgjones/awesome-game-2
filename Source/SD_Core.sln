@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C# Express 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SD_Core", "SD_Core\SD_Core.csproj", "{5E4693F7-9BCC-407F-B169-5E882277D427}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SD_Shared", "SD_Shared\SD_Shared.csproj", "{12D0B265-E5C8-4088-A38E-6CB5A682DD87}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{5E4693F7-9BCC-407F-B169-5E882277D427}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E4693F7-9BCC-407F-B169-5E882277D427}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E4693F7-9BCC-407F-B169-5E882277D427}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12D0B265-E5C8-4088-A38E-6CB5A682DD87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12D0B265-E5C8-4088-A38E-6CB5A682DD87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12D0B265-E5C8-4088-A38E-6CB5A682DD87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12D0B265-E5C8-4088-A38E-6CB5A682DD87}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

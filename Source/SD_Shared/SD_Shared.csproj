@@ -5,14 +5,13 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{5E4693F7-9BCC-407F-B169-5E882277D427}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{12D0B265-E5C8-4088-A38E-6CB5A682DD87}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SD_Core</RootNamespace>
-    <AssemblyName>SD_Core</AssemblyName>
+    <RootNamespace>SD_Shared</RootNamespace>
+    <AssemblyName>SD_Shared</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <StartupObject>SD.Core.Core</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,10 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MySql.Data, Version=1.0.10.1, Culture=neutral, PublicKeyToken=c5687fc88969c44d">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\MySql.Data.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -50,15 +45,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core.cs" />
-    <Compile Include="DatabaseConnection.cs" />
+    <Compile Include="LocationInfo.cs" />
+    <Compile Include="ResourceEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SD_Shared\SD_Shared.csproj">
-      <Project>{12D0B265-E5C8-4088-A38E-6CB5A682DD87}</Project>
-      <Name>SD_Shared</Name>
-    </ProjectReference>
+    <Compile Include="StockInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
