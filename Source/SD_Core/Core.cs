@@ -57,6 +57,7 @@ namespace SD.Core
                 foreach (LocationInfo location in _locations)
                 {
                     database.UpdateStockInfo(location);
+
                 }
                 Console.Write('.');
 
