@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PlayerInfo.cs" />
     <Compile Include="LocationInfo.cs" />
     <Compile Include="ResourceEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

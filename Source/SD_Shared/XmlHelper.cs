@@ -25,6 +25,14 @@ namespace SD.Shared
             internal const string unitprice = "unitprice";
             internal const string quantity = "quantity";
             internal const string resourcetype = "resourcetype";
+            internal const string players = "players";
+            internal const string player = "player";
+            internal const string email = "email";
+            internal const string password = "password";
+            internal const string joined = "joined";
+            internal const string last_login = "last_login";
+            internal const string balance = "balance";
+
         }
 
         public static List<LocationInfo> DeserialiseLocationList(Stream stream)
@@ -90,8 +98,32 @@ namespace SD.Shared
             XmlWriter writer = XmlWriter.Create(stream, settings);
             tree.WriteTo(writer);
             writer.Flush();
-
         }
 
+        public static void SerialisePlayerList(List<PlayerInfo> playerList, Stream stream)
+        {
+            if (playerList == null)
+                return;
+
+            XElement tree = new XElement(xNames.players,
+                from l in playerList
+                select
+                    new XElement(xNames.player,
+                        new XAttribute(xNames.id, l.Id),
+                        new XAttribute(xNames.email, l.Email),
+                        new XAttribute(xNames.password, l.Password),
+                        new XAttribute(xNames.name, l.Name),
+                        new XAttribute(xNames.joined, l.Joined),
+                        new XAttribute(xNames.last_login, l.LastLogin),
+                        new XAttribute(xNames.balance, l.Balance)
+                        )
+                    );
+
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            XmlWriter writer = XmlWriter.Create(stream, settings);
+            tree.WriteTo(writer);
+            writer.Flush();
+        }
     }
 }

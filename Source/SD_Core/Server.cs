@@ -48,19 +48,58 @@ namespace SD.Core
             {
                 var context = (HttpListenerContext)listenerContext;
                 Uri uri = context.Request.Url;
-                Console.WriteLine(uri.PathAndQuery);
+                Console.WriteLine("Got " + uri.PathAndQuery + " so path is " + uri.AbsolutePath + " and query is " + uri.Query);
 
-                List<LocationInfo> locations;
-                locations = new List<LocationInfo>(_connection.GetLocations());
+                string path = uri.AbsolutePath.Substring(1);
+                string query="";
+                if (uri.Query.Length > 0)
+                    query = uri.Query.Substring(1);
 
-                foreach (LocationInfo location in locations)
+                Console.WriteLine("So path is now " + path + " and query is " + query);
+
+                switch (path)
                 {
-                    _connection.UpdateStockInfo(location);
+                    case "players":
+                        Console.WriteLine("Oh the players!");
+
+                        List<PlayerInfo> players;
+
+                        if (query.Length > 0)
+                        {
+                            string[] queries = query.Split('=');
+                            if (queries[0] == "id")
+                                players = new List<PlayerInfo>(_connection.GetPlayers(int.Parse(queries[1])));
+                            else
+                                players = new List<PlayerInfo>(_connection.GetPlayers());
+
+                        }
+                        else
+                        {
+                            players = new List<PlayerInfo>(_connection.GetPlayers());
+                        }
+
+                        XmlHelper.SerialisePlayerList(players, context.Response.OutputStream);
+
+                        context.Response.OutputStream.Close();
+
+                        break;
+                    default:
+                        break;
                 }
 
-                XmlHelper.SerialiseLocationList(locations, context.Response.OutputStream);
+                //List<LocationInfo> locations;
+                //locations = new List<LocationInfo>(_connection.GetLocations());
 
-                context.Response.OutputStream.Close();
+                //foreach (LocationInfo location in locations)
+                //{
+                //    _connection.UpdateStockInfo(location);
+                //}
+
+                //XmlHelper.SerialiseLocationList(locations, context.Response.OutputStream);
+
+                //context.Response.OutputStream.Close();
+
+
             }
             catch (Exception ex)
             {
