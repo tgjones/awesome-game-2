@@ -398,14 +398,82 @@ namespace SD.Core
         }
 
         /// <summary>
+        /// Return a list of stock information for this location.
+        /// </summary>
+        List<StockFullInfo> GetStockInfo(int location_id)
+        {
+            if (!IsConnected)
+                throw new Exception("Not connected to database.");
+
+            Dictionary<ResourceEnum, StockFullInfo> stockList = new Dictionary<ResourceEnum,StockFullInfo>();
+            foreach (ResourceEnum resource in Enum.GetValues(typeof(ResourceEnum)))
+            {
+                stockList.Add(resource, new StockFullInfo());
+                stockList[resource].ResourceType = resource;
+                stockList[resource].LocationId = location_id;
+            }
+
+            // get the quantity, maximum and prices for each commodity from location_stock
+            MySqlCommand command = _connection.CreateCommand();
+            command.CommandText = @"select commodity_id, quantity, maximum, price from location_stock where location_id = " + location_id + ";";
+            using (MySqlDataReader Reader = command.ExecuteReader())
+            {
+                while (Reader.Read())
+                {
+                    ResourceEnum resource = (ResourceEnum)(int)Reader.GetUInt32("commodity_id");
+                    stockList[resource].Quantity = (int)Reader.GetUInt32("quantity");
+                    stockList[resource].Maximum = (int)Reader.GetUInt32("maximum");
+                    stockList[resource].UnitPrice = (int)Reader.GetUInt32("price");
+                }
+            }
+
+            // get the process ids for this location from location_process
+            List<int> processList = new List<int>();
+            command.CommandText = @"select id as process_id from location_process where location_id = " + location_id + ";";
+            using (MySqlDataReader Reader = command.ExecuteReader())
+            {
+                while (Reader.Read())
+                {
+                    processList.Add((int)Reader.GetUInt32("process_id"));
+                }
+            }
+
+            // get all the info about the stocks
+            foreach (int process_id in processList)
+            {
+                // consumption
+                command.CommandText = @"select commodity_id, quantity from process_consumption where process_id = " + process_id + ";";
+                using (MySqlDataReader Reader = command.ExecuteReader())
+                {
+                    while (Reader.Read())
+                    {
+                        ResourceEnum resource = (ResourceEnum)(int)Reader.GetUInt32("commodity_id");
+                        stockList[resource].Consumes += (int)Reader.GetUInt32("quantity");
+                    }
+                }
+                // production
+                command.CommandText = @"select commodity_id, quantity from process_production where process_id = " + process_id + ";";
+                using (MySqlDataReader Reader = command.ExecuteReader())
+                {
+                    while (Reader.Read())
+                    {
+                        ResourceEnum resource = (ResourceEnum)(int)Reader.GetUInt32("commodity_id");
+                        stockList[resource].Produces += (int)Reader.GetUInt32("quantity");
+                    }
+                }
+            }
+
+            return stockList.Values.ToList();
+        }
+
+        #region Production cycle
+        /// <summary>
         /// Check through the locations, consuming and producing where possible.
         /// </summary>
         internal void ProductionCycle()
         {
             if (!IsConnected)
                 throw new Exception("Not connected to database.");
-
-            List<string> players = new List<string>();
 
             MySqlCommand command = _connection.CreateCommand();
 
@@ -495,7 +563,8 @@ namespace SD.Core
                         
                         command.CommandText = @"update location_stock " +
                             " set quantity = " + processItem.Value.CurrentLevel +
-                            " where commodity_id = " + (int)processItem.Key + ";";
+                            " where commodity_id = " + (int)processItem.Key +
+                            " and location_id = " + processInfo.Location_id + ";";
                         command.ExecuteNonQuery();
                     }
                     
@@ -509,9 +578,8 @@ namespace SD.Core
                 command.ExecuteNonQuery();
 
             }
-
-
         }
+
         /// <summary>
         ///  Struct for holding data about a production process
         /// </summary>
@@ -593,6 +661,64 @@ namespace SD.Core
                 CurrentLevel = CurrentLevel + Produced - Consumed;
             }
         }
+        #endregion //Production cycle
+
+
+        #region Price adjustments
+        /// <summary>
+        /// Update the prices for commodities at all locations
+        /// </summary>
+        internal void UpdatePrices()
+        {
+            Console.WriteLine("\n------ Financial Year ------");
+
+            decimal interestRate = 0.0102M;
+            Console.WriteLine("Interest rate: {0:P}", interestRate);
+
+            if (!IsConnected)
+                throw new Exception("Not connected to database.");
+
+            MySqlCommand command = _connection.CreateCommand();
+
+            // get a list of all locations
+            List<int> locationList = new List<int>();
+            command.CommandText = @"select id as location_id from locations;";
+
+            using (MySqlDataReader Reader = command.ExecuteReader())
+            {
+                while (Reader.Read())
+                {
+                    int location_id = (int)Reader.GetInt32("location_id");
+                    locationList.Add(location_id);
+                }
+            }
+
+            // process each location in turn
+            foreach (int location_id in locationList)
+            {
+                command.CommandText = "start transaction";
+                command.ExecuteNonQuery();
+
+                foreach (StockFullInfo stockInfo in GetStockInfo(location_id))
+                {
+                    int oldPrice = stockInfo.UnitPrice;
+                    stockInfo.UpdatePrice(interestRate);
+                    if (oldPrice != stockInfo.UnitPrice)
+                    {
+                        command.CommandText = "update location_stock set price = " + stockInfo.UnitPrice +
+                                              " where location_id = " + stockInfo.LocationId +
+                                              " and commodity_id = " + (int)stockInfo.ResourceType + ";";
+                        command.ExecuteNonQuery();
+                    }
+                }
+
+                command.CommandText = "commit";
+                command.ExecuteNonQuery();
+            }
+        }
+
+        #endregion
+
 
         #endregion Methods
     }
