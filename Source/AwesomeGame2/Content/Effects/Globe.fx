@@ -51,8 +51,14 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
+	float4 lightAmbient = { 0.1f, 0.1f, 0.1f, 1.0f};
+	float4 lightDiffuse = { 0.8f, 0.8f, 0.8f, 1.0f };
+	float3 lightDirection = { 1.0f, 0.0f, 0.0f };
+	float4 light = lightAmbient + saturate(dot(input.Normal, lightDirection));
+	
 	// Get offset from texture.
-	return tex2D(PlanetTextureSampler, input.TexCoord)
+	return light
+		* tex2D(PlanetTextureSampler, input.TexCoord)
 		* tex2D(DetailTextureSampler, input.TexCoord * 20);
 }
 
