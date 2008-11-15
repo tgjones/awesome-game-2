@@ -108,8 +108,8 @@ namespace AwesomeGame2
 
             // Update the zoom target level
             _targetRadius -= 0.05f * lMouseService.ScrollWheelValueChange; // sensitivity
-            if (_targetRadius < 3.0f)
-                _targetRadius = 3.0f; // closest zoom radius
+            if (_targetRadius < 2.5f)
+                _targetRadius = 2.5f; // closest zoom radius
 
             // Update the zoom
             float lRadius = _position.Length() + Math.Min(gameTime.ElapsedRealTime.Milliseconds / 250.0f, 1.0f) * (_targetRadius - _position.Length()); // lag speed

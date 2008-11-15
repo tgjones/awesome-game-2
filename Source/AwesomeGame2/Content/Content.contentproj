@@ -35,13 +35,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Globe.x">
-      <Name>Globe</Name>
-      <Importer>XImporter</Importer>
-      <Processor>TrianglePickingProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\AwesomeGame2.ContentPipeline\AwesomeGame2.ContentPipeline.csproj">
       <Project>{91854F10-C5B3-4AC7-90BD-626DFC7A13D2}</Project>
       <Name>AwesomeGame2.ContentPipeline</Name>
@@ -50,6 +43,27 @@
   <ItemGroup>
     <Compile Include="cursor.png">
       <Name>cursor</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Effects\Globe.fx">
+      <Name>Globe</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Noise.png">
+      <Name>Noise</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\earth.bmp">
+      <Name>earth</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
