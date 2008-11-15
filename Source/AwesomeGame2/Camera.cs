@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace AwesomeGame2
 {
-	public class Camera
+	public class Camera : ICameraService
 	{
 		#region Properties
 
@@ -98,8 +98,10 @@ namespace AwesomeGame2
 
 		#region Methods
 
-		public void UpdateMatrices()
+		public void Update()
 		{
+			
+
 			this.View = Matrix.CreateLookAt(this.Position, this.LookAt, this.Up);
 			this.Projection = Matrix.CreatePerspectiveFieldOfView(this.FieldOfView,
 				this.AspectRatio, this.NearPlaneDistance, this.FarPlaneDistance);

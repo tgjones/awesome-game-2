@@ -35,17 +35,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GlobeTexture.jpg">
-      <Name>GlobeTexture</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Globe.x">
       <Name>Globe</Name>
       <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\AwesomeGame2.ContentPipeline\AwesomeGame2.ContentPipeline.csproj">
+      <Project>{91854F10-C5B3-4AC7-90BD-626DFC7A13D2}</Project>
+      <Name>AwesomeGame2.ContentPipeline</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="cursor.png">
+      <Name>cursor</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\v3.0\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

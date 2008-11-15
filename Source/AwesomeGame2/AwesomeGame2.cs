@@ -23,7 +23,6 @@ namespace AwesomeGame2
 		private GraphicsDeviceManager _graphics;
 		private SpriteBatch _spriteBatch;
 		private Camera _camera;
-		private Model _test0;
         
 		public static AwesomeGame2 Instance
 		{
@@ -52,8 +51,19 @@ namespace AwesomeGame2
 			_camera = new Camera();
 			_camera.Position = new Vector3(0, 10, 10);
 			_camera.LookAt = Vector3.Zero;
+			this.Services.AddService(typeof(ICameraService), _camera);
 
-            this.Components.Add(new Starfield(this, _camera, 1500));
+			Mesh globe = new Mesh(this, "Globe") { Name = "Globe" };
+			this.Components.Add(globe);
+			
+			this.Components.Add(new Starfield(this, _camera, 1500));
+
+			Picker picker = new Picker(this);
+			this.Components.Add(picker);
+
+			Cursor cursor = new Cursor(this, this.Content);
+			this.Services.AddService(typeof(ICursorService), cursor);
+			this.Components.Add(cursor);
 
 			base.Initialize();
 		}
@@ -65,7 +75,6 @@ namespace AwesomeGame2
 		protected override void LoadContent()
 		{
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
-			_test0 = this.Content.Load<Model>("Globe");
 		}
 
 		/// <summary>
@@ -88,7 +97,7 @@ namespace AwesomeGame2
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
 				this.Exit();
 
-			_camera.UpdateMatrices();
+			_camera.Update();
 
 			base.Update(gameTime);
 		}
@@ -100,24 +109,6 @@ namespace AwesomeGame2
 		protected override void Draw(GameTime gameTime)
 		{
 			GraphicsDevice.Clear(Color.Black);
-
-			Matrix[] transforms = new Matrix[_test0.Bones.Count];
-			_test0.CopyAbsoluteBoneTransformsTo(transforms);
-			foreach (ModelMesh mesh in _test0.Meshes)
-			{
-				foreach (BasicEffect effect in mesh.Effects)
-				{
-					effect.World = transforms[mesh.ParentBone.Index];
-					effect.View = _camera.View;
-					effect.Projection = _camera.Projection;
-
-                    Sunlight.ApplyToBasicEffect(effect);
-
-                    effect.SpecularColor = new Vector3();
-				}
-
-				mesh.Draw();
-			}
 
 			base.Draw(gameTime);
 		}
