@@ -21,7 +21,12 @@ namespace AwesomeGame2.Input
             get { return _currentMouseState.ScrollWheelValue - _previousMouseState.ScrollWheelValue; }
         }
 
-        public bool RightClickPressed
+				public bool LeftClickPressed
+				{
+					get { return _currentMouseState.LeftButton == ButtonState.Pressed; }
+				}
+
+				public bool RightClickPressed
         {
             get { return _currentMouseState.RightButton == ButtonState.Pressed; }
         }

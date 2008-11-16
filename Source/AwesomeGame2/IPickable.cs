@@ -5,6 +5,12 @@ namespace AwesomeGame2
 {
 	public interface IPickable
 	{
+		bool IsSelected
+		{
+			get;
+			set;
+		}
+
 		string Name
 		{
 			get;

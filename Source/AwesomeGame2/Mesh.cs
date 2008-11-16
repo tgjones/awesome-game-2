@@ -9,6 +9,12 @@ namespace AwesomeGame2
 	{
 		private string _assetName;
 
+		public bool IsSelected
+		{
+			get;
+			set;
+		}
+
 		public Matrix World
 		{
 			get;

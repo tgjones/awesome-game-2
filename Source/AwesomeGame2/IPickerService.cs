@@ -9,11 +9,5 @@ namespace AwesomeGame2
 		{
 			get;
 		}
-
-		[Obsolete("I've made this obsolete specially to make Jason happy", false)]
-		string PickedModelName
-		{
-			get;
-		}
 	}
 }

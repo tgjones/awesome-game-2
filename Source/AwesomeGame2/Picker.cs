@@ -11,6 +11,9 @@ namespace AwesomeGame2
 	{
 		#region Fields
 
+		IPickable SelectedPickable;
+		private bool SelectedPickableLocked;
+
 		// To keep things efficient, the picking works by first applying a bounding
 		// sphere test, and then only bothering to test each individual triangle
 		// if the ray intersects the bounding sphere. This allows us to trivially
@@ -54,11 +57,6 @@ namespace AwesomeGame2
 				lOutput.Normalize();
 				return lOutput;
 			}
-		}
-
-		public string PickedModelName
-		{
-			get { throw new NotImplementedException(); }
 		}
 
 		#endregion
@@ -148,20 +146,40 @@ namespace AwesomeGame2
 				}
 			}
 
-			if (pickedPickable != null && pickedPickable is Location)
+			Input.IMouseService lMouseService = this.Game.Services.GetService<Input.IMouseService>();
+
+			if (lMouseService.LeftClickPressed || SelectedPickable is Globe)
+				SelectedPickableLocked = false;
+
+			if (SelectedPickable != null && !SelectedPickableLocked)
+			{
+				SelectedPickable.IsSelected = false;
+				SelectedPickable = null;
+			}
+
+			if (pickedPickable != null && !SelectedPickableLocked)
+			{
+				pickedPickable.IsSelected = true;
+				SelectedPickable = pickedPickable;
+
+				if (lMouseService.LeftClickPressed)
+					SelectedPickableLocked = true;
+			}
+
+			if (SelectedPickable != null && SelectedPickable is Location)
 			{
 				LocationInfoPanel locationInfoPanel = this.Game.Components.OfType<LocationInfoPanel>().SingleOrDefault();
 				bool add = true;
 				if (locationInfoPanel != null)
 				{
-					if (locationInfoPanel.LocationID != ((Location) pickedPickable).LocationID)
+					if (locationInfoPanel.LocationID != ((Location)SelectedPickable).LocationID)
 						this.Game.Components.Remove(locationInfoPanel);
 					else
 						add = false;
 				}
 				if (add)
 				{
-					LocationInfoPanel panel = new LocationInfoPanel(this.Game, ((Location) pickedPickable).LocationID);
+					LocationInfoPanel panel = new LocationInfoPanel(this.Game, ((Location)SelectedPickable).LocationID);
 					this.Game.Components.Add(panel);
 				}
 			}
@@ -170,20 +188,20 @@ namespace AwesomeGame2
 				this.Game.Components.Remove(this.Game.Components.OfType<LocationInfoPanel>().SingleOrDefault());
 			}
 
-			if (pickedPickable != null && pickedPickable is Route)
+			if (SelectedPickable != null && SelectedPickable is Route)
 			{
 				RouteInfoPanel panel = this.Game.Components.OfType<RouteInfoPanel>().SingleOrDefault();
 				bool add = true;
 				if (panel != null)
 				{
-					if (panel.LocationID1 != ((Route)pickedPickable).LocationInfo1.Id || panel.LocationID2 != ((Route)pickedPickable).LocationInfo2.Id)
+					if (panel.LocationID1 != ((Route)SelectedPickable).LocationInfo1.Id || panel.LocationID2 != ((Route)SelectedPickable).LocationInfo2.Id)
 						this.Game.Components.Remove(panel);
 					else
 						add = false;
 				}
 				if (add)
 				{
-					panel = new RouteInfoPanel(this.Game, ((Route)pickedPickable).LocationInfo1, ((Route)pickedPickable).LocationInfo2);
+					panel = new RouteInfoPanel(this.Game, ((Route)SelectedPickable).LocationInfo1, ((Route)SelectedPickable).LocationInfo2);
 					this.Game.Components.Add(panel);
 				}
 			}

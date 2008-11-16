@@ -17,6 +17,12 @@ namespace AwesomeGame2.GameObjects
 
 		#region Properties
 
+		public bool IsSelected
+		{
+			get;
+			set;
+		}
+
 		public string Name
 		{
 			get { return _locationInfo.Name; }

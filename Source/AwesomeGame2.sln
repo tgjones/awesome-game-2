@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+# Visual C# Express 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AwesomeGame2", "AwesomeGame2\AwesomeGame2.csproj", "{BD287692-0380-4A97-8967-D67ECF0E1A5A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AwesomeGame2.ContentPipeline", "AwesomeGame2.ContentPipeline\AwesomeGame2.ContentPipeline.csproj", "{91854F10-C5B3-4AC7-90BD-626DFC7A13D2}"
@@ -53,16 +53,6 @@ Global
 		{91854F10-C5B3-4AC7-90BD-626DFC7A13D2}.Release|Xbox 360.Build.0 = Release|Xbox 360
 		{91854F10-C5B3-4AC7-90BD-626DFC7A13D2}.Release|Zune.ActiveCfg = Release|Zune
 		{91854F10-C5B3-4AC7-90BD-626DFC7A13D2}.Release|Zune.Build.0 = Release|Zune
-		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Debug|x86.ActiveCfg = Debug|x86
-		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Debug|Xbox 360.ActiveCfg = Debug|x86
-		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Debug|Zune.ActiveCfg = Debug|x86
-		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Release|Any CPU.ActiveCfg = Release|x86
-		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Release|x86.ActiveCfg = Release|x86
-		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Release|Xbox 360.ActiveCfg = Release|x86
-		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Release|Zune.ActiveCfg = Release|x86
 		{12D0B265-E5C8-4088-A38E-6CB5A682DD87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{12D0B265-E5C8-4088-A38E-6CB5A682DD87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12D0B265-E5C8-4088-A38E-6CB5A682DD87}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -77,6 +67,16 @@ Global
 		{12D0B265-E5C8-4088-A38E-6CB5A682DD87}.Release|x86.ActiveCfg = Release|Any CPU
 		{12D0B265-E5C8-4088-A38E-6CB5A682DD87}.Release|Xbox 360.ActiveCfg = Release|Any CPU
 		{12D0B265-E5C8-4088-A38E-6CB5A682DD87}.Release|Zune.ActiveCfg = Release|Any CPU
+		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Debug|x86.ActiveCfg = Debug|x86
+		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Debug|Xbox 360.ActiveCfg = Debug|x86
+		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Debug|Zune.ActiveCfg = Debug|x86
+		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Release|Any CPU.ActiveCfg = Release|x86
+		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Release|x86.ActiveCfg = Release|x86
+		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Release|Xbox 360.ActiveCfg = Release|x86
+		{E0F50639-B20C-4A25-9CAE-5BDB9CEDA789}.Release|Zune.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -30,6 +30,12 @@ namespace AwesomeGame2
 
 		#region Properties
 
+		public bool IsSelected
+		{
+			get;
+			set;
+		}
+
 		public Matrix World
 		{
 			get;

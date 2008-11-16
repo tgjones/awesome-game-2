@@ -24,6 +24,12 @@ namespace AwesomeGame2.GameObjects
 			get { return _locationInfo2; }
 		}
 
+		public bool IsSelected
+		{
+			get;
+			set;
+		}
+
 		public Vector3[] Vertices
 		{
 			get;
@@ -91,7 +97,7 @@ namespace AwesomeGame2.GameObjects
 
 				// Populate vertices
 				Vertices[i] = new Vector3(x, y, z);
-				lineVertices[i] = new VertexPositionColor(Vertices[i], new Color(Color.Black, 0.5f));
+				lineVertices[i] = new VertexPositionColor(Vertices[i], Color.Black);
 			}
 
 			base.LoadContent();
@@ -103,7 +109,10 @@ namespace AwesomeGame2.GameObjects
 			for (int i = 0; i < lineVertices.Length; i++)
 			{
 				float lMiddleness = 0.4f + Math.Max(0.2f - 0.01f * Math.Abs(i - lSelectedVertex), 0.0f);
-				lineVertices[i].Color = new Color(1.0f, 0, 0, lMiddleness);
+				if (IsSelected)
+					lineVertices[i].Color = new Color(1.0f, lMiddleness, lMiddleness, 1.0f);
+				else
+					lineVertices[i].Color = new Color(1.0f, 0.0f, 0.0f, lMiddleness);
 			}
 
 			base.Update(gameTime);
