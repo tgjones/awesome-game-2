@@ -13,6 +13,7 @@ namespace SD.Core
     {
         HttpListener _listener;
         DatabaseConnection _connection;
+        SessionList _sessions;
 
         public Server(string uriPrefix, DatabaseConnection connection)
         {
@@ -25,6 +26,8 @@ namespace SD.Core
             _listener.Prefixes.Add(uriPrefix);
 
             _connection = connection;
+
+            _sessions = new SessionList();
         }
 
         public void Start()
@@ -59,6 +62,50 @@ namespace SD.Core
 
                 switch (path)
                 {
+                    case "login":
+                        Console.WriteLine("Login request.");
+                        LoginInfo loginInfo = new LoginInfo();
+                        loginInfo.LoginSuccessful = false;
+
+                        PlayerInfo playerInfo = null;
+                        {
+                            //TODO: get player_id by looking up email address in players list
+                            int player_id = 1;
+                            List<PlayerInfo> playerList = new List<PlayerInfo>(_connection.GetPlayers(player_id));
+                            playerInfo = playerList[0];
+                        }
+
+                        if (playerInfo == null)
+                        {
+                            loginInfo.LoginFailReason = "Could not identify player.";
+                        }
+                        {
+                            if (_sessions.FindSession(playerInfo.Id) != null)
+                            {
+                                loginInfo.LoginFailReason = "Already logged in.";
+                            }
+                            else
+                            {
+                                // check authentication
+                                if (false)
+                                {
+                                    loginInfo.LoginFailReason = "Authentication failed.";
+                                }
+                                else
+                                {
+                                    SessionInfo newSession = new SessionInfo(playerInfo.Id);
+                                    _sessions.Add(newSession);
+                                    loginInfo.LoginSuccessful = true;
+                                    loginInfo.SessionKey = newSession.session_key;
+                                }
+                            }
+                        }
+
+                        XmlHelper.SerialiseLoginInfo(loginInfo, context.Response.OutputStream);
+                        context.Response.OutputStream.Close();
+                        break;
+
+
                     case "players":
                         Console.WriteLine("Oh the players!");
 
@@ -73,7 +120,6 @@ namespace SD.Core
                                 players = new List<PlayerInfo>(_connection.GetPlayers(queries[1]));
                             else
                                 players = new List<PlayerInfo>(_connection.GetPlayers());
-
                         }
                         else
                         {

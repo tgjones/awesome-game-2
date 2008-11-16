@@ -99,5 +99,22 @@ namespace SD.Shared
         }
 
         #endregion // Serialise MessageList
+
+        #region Serialise LoginInfo
+        public static void SerialiseLoginInfo(LoginInfo login, Stream stream)
+        {
+            XmlSerializer xs = new XmlSerializer(typeof(LoginInfo));
+            xs.Serialize(stream, login);
+        }
+
+        public static LoginInfo DeserialiseLoginInfo(Stream stream)
+        {
+            LoginInfo login;
+            XmlSerializer xs = new XmlSerializer(typeof(LoginInfo));
+            login = (LoginInfo)xs.Deserialize(stream);
+            return login;
+        }
+        #endregion //Serialise LoginInfo
+
     }
 }
