@@ -76,8 +76,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fonts\Calibri.spritefont">
-      <Name>Calibri</Name>
+    <Compile Include="Fonts\Heading.spritefont">
+      <Name>Heading</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
@@ -162,6 +162,27 @@
       <Name>SunLayerCube2</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\WhitePixel.png">
+      <Name>WhitePixel</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Fonts\Paragraph.spritefont">
+      <Name>Paragraph</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Fonts\SubHeading.spritefont">
+      <Name>SubHeading</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\v3.0\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

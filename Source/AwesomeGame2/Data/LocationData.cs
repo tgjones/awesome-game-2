@@ -27,7 +27,7 @@ namespace AwesomeGame2.Data
 		{
 			using (WebClient webClient = new WebClient())
 			{
-				Stream locationsStream = webClient.OpenRead("http://192.168.0.103:54321/location?id=" + id);
+				Stream locationsStream = webClient.OpenRead("http://192.168.0.103:54321/locations?id=" + id);
 				return XmlHelper.DeserialiseLocationList(locationsStream)[0];
 			}
 		}

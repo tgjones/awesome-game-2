@@ -37,6 +37,11 @@ namespace AwesomeGame2.GameObjects
 			get { return _simpleFactory.Vertices; }
 		}
 
+		public int LocationID
+		{
+			get { return _locationInfo.Id; }
+		}
+
 		#endregion
 
 		public Location(Game game, LocationInfo locationInfo)

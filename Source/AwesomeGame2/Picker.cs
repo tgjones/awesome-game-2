@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using AwesomeGame2.GameObjects;
 
 namespace AwesomeGame2
 {
@@ -20,7 +21,7 @@ namespace AwesomeGame2
 		private List<string> insideBoundingSpheres = new List<string>();
 
 		// Store the name of the model underneath the cursor (or null if there is none).
-		private string pickedModelName;
+		//private string pickedModelName;
 
 		// Vertex array that stores exactly which triangle was picked.
 		private VertexPositionColor[] pickedRadius =
@@ -57,7 +58,7 @@ namespace AwesomeGame2
 
 		public string PickedModelName
 		{
-			get { return pickedModelName; }
+			get { throw new NotImplementedException(); }
 		}
 
 		#endregion
@@ -98,7 +99,7 @@ namespace AwesomeGame2
 			// Clear the previous picking results.
 			insideBoundingSpheres.Clear();
 
-			pickedModelName = null;
+			IPickable pickedPickable = null;
 			pickedRadius[1].Position = Vector3.Zero;
 
 			// Keep track of the closest object we have seen so far, so we can
@@ -134,7 +135,7 @@ namespace AwesomeGame2
 						// Store information about this model.
 						closestIntersection = intersection.Value;
 
-						pickedModelName = pickable.Name;
+						pickedPickable = pickable;
 
 						// Store vertex positions so we can display the picked triangle.
 						pickedTriangle[0].Position = vertex1;
@@ -145,6 +146,28 @@ namespace AwesomeGame2
 						pickedRadius[1].Position = cursorRay.Direction * 2000.0f;
 					}
 				}
+			}
+
+			if (pickedPickable != null && pickedPickable is Location)
+			{
+				LocationInfoPanel locationInfoPanel = this.Game.Components.OfType<LocationInfoPanel>().SingleOrDefault();
+				bool add = true;
+				if (locationInfoPanel != null)
+				{
+					if (locationInfoPanel.LocationID != ((Location) pickedPickable).LocationID)
+						this.Game.Components.Remove(locationInfoPanel);
+					else
+						add = false;
+				}
+				if (add)
+				{
+					LocationInfoPanel panel = new LocationInfoPanel(this.Game, ((Location) pickedPickable).LocationID);
+					this.Game.Components.Add(panel);
+				}
+			}
+			else
+			{
+				this.Game.Components.Remove(this.Game.Components.OfType<LocationInfoPanel>().SingleOrDefault());
 			}
 
 			base.Update(gameTime);
@@ -329,7 +352,7 @@ namespace AwesomeGame2
 
 		public override void Draw(GameTime gameTime)
 		{
-			if (pickedModelName != null)
+			/*if (pickedModelName != null)
 			{
 				GraphicsDevice device = this.Game.GraphicsDevice;
 				RenderState renderState = device.RenderState;
@@ -363,7 +386,7 @@ namespace AwesomeGame2
 				renderState.FillMode = FillMode.Solid;
 				renderState.CullMode = CullMode.None;
 				renderState.DepthBufferEnable = true;
-			}
+			}*/
 
 			base.Draw(gameTime);
 		}

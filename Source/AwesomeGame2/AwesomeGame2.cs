@@ -22,10 +22,7 @@ namespace AwesomeGame2
 	public class AwesomeGame2 : Microsoft.Xna.Framework.Game
 	{
 		private static AwesomeGame2 _instance;
-
 		private GraphicsDeviceManager _graphics;
-		private SpriteBatch _spriteBatch;
-		private SpriteFont _spriteFont;
 
 		public static AwesomeGame2 Instance
 		{
@@ -40,7 +37,7 @@ namespace AwesomeGame2
 		private AwesomeGame2()
 		{
 			_graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
+			Content.RootDirectory = "Content";
 		}
 
 		/// <summary>
@@ -80,27 +77,7 @@ namespace AwesomeGame2
 			foreach (LocationInfo locationInfo in locationData.GetLocations())
 				this.Components.Add(new Location(this, locationInfo));
 
-			_spriteFont = this.Content.Load<SpriteFont>(@"Fonts\Calibri");
-
 			base.Initialize();
-		}
-
-		/// <summary>
-		/// LoadContent will be called once per game and is the place to load
-		/// all of your content.
-		/// </summary>
-		protected override void LoadContent()
-		{
-			_spriteBatch = new SpriteBatch(GraphicsDevice);
-		}
-
-		/// <summary>
-		/// UnloadContent will be called once per game and is the place to unload
-		/// all content.
-		/// </summary>
-		protected override void UnloadContent()
-		{
-			// TODO: Unload any non ContentManager content here
 		}
 
 		/// <summary>
@@ -124,16 +101,7 @@ namespace AwesomeGame2
 		protected override void Draw(GameTime gameTime)
 		{
 			GraphicsDevice.Clear(Color.Black);
-
 			base.Draw(gameTime);
-
-			IPickerService picker = Services.GetService<IPickerService>();
-			if (picker.PickedModelName != null)
-			{
-				_spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
-				_spriteBatch.DrawString(_spriteFont, picker.PickedModelName, new Vector2(10, 10), Color.White);
-				_spriteBatch.End();
-			}
 		}
 	}
 }
