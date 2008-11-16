@@ -62,13 +62,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Textures\earth.bmp">
-      <Name>earth</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Fonts\Heading.spritefont">
       <Name>Heading</Name>
       <Importer>FontDescriptionImporter</Importer>
@@ -420,6 +413,27 @@
     </Compile>
     <Compile Include="Textures\Icons\wood.bmp">
       <Name>wood</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Globe\EarthDay.bmp">
+      <Name>EarthDay</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Globe\EarthBump.bmp">
+      <Name>EarthBump</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>NormalMapTextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Globe\EarthSpecular.bmp">
+      <Name>EarthSpecular</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

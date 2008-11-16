@@ -14,6 +14,16 @@ sampler_state
     AddressV = Wrap;
 };
 
+float3 GetNormal(float3 normal, float2 texCoord, float3x3 tangentToWorld)
+{
+	return normal;
+}
+
+float GetSpecularFactor(float2 texCoord)
+{
+	return 32.0f;
+}
+
 float4 GetColour(float2 texCoord)
 {
 	if (TextureEnabled)

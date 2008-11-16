@@ -102,8 +102,9 @@ namespace AwesomeGame2
 			_effect = this.Game.Content.Load<Effect>(@"Effects\Globe");
 			_vertexDeclaration = new VertexDeclaration(this.GraphicsDevice, VertexPositionNormalTexture.VertexElements);
 
-			_effect.Parameters["PlanetTexture"].SetValue(this.Game.Content.Load<Texture2D>(@"Textures\earth"));
-			_effect.Parameters["DetailTexture"].SetValue(this.Game.Content.Load<Texture2D>(@"Textures\Noise"));
+			_effect.Parameters["DayTexture"].SetValue(this.Game.Content.Load<Texture2D>(@"Textures\Globe\EarthDay"));
+			_effect.Parameters["BumpTexture"].SetValue(this.Game.Content.Load<Texture2D>(@"Textures\Globe\EarthBump"));
+			_effect.Parameters["SpecularTexture"].SetValue(this.Game.Content.Load<Texture2D>(@"Textures\Globe\EarthSpecular"));
 
 			base.LoadContent();
 		}
