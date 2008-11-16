@@ -16203,9 +16203,7 @@ Frame Frame_SCENE_ROOT {
      51.200001;
      0.000000;0.000000;0.000000;;
      0.000000;0.000000;0.000000;;
-     TextureFilename {
-      "earth\\earth.bmp";
-     }
+     
     }
    }
   }

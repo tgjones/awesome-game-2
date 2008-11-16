@@ -54,24 +54,24 @@ namespace SD.Shared
             {
                 tree = XElement.Load(xr);
             }
-            if (tree != null)
-            {
-                result = new List<LocationInfo>(from xe in tree.Elements(xNames.location)
-                                                select
-                                                    new LocationInfo((int)xe.Attribute(xNames.id),
-                                                        (int)xe.Attribute(xNames.latitude),
-                                                        (int)xe.Attribute(xNames.longitude),
-                                                        (string)xe.Attribute(xNames.name),
-                                                        new List<StockInfo>(from xs in xe.Element(xNames.stocks).Elements(xNames.stock)
-                                                                            select
-                                                                                new StockInfo((ResourceEnum)Enum.Parse(typeof(ResourceEnum),(string)xs.Attribute(xNames.resourcetype)),
-                                                                                    (int)xs.Attribute(xNames.quantity),
-                                                                                    (int)xs.Attribute(xNames.unitprice)
-                                                                                    )
-                                                                                )
-                                                                            )
-                                                                        );
-            }
+						if (tree != null)
+						{
+							result = new List<LocationInfo>(from xe in tree.Elements(xNames.location)
+																							select
+																									new LocationInfo((int) xe.Attribute(xNames.id),
+																											Convert.ToDecimal(xe.Attribute(xNames.latitude).Value),
+																											Convert.ToDecimal(xe.Attribute(xNames.longitude).Value),
+																											(string) xe.Attribute(xNames.name),
+																											new List<StockInfo>(from xs in xe.Element(xNames.stocks).Elements(xNames.stock)
+																																					select
+																																							new StockInfo((ResourceEnum) Enum.Parse(typeof(ResourceEnum), (string) xs.Attribute(xNames.resourcetype)),
+																																									Convert.ToInt32(xs.Attribute(xNames.quantity).Value),
+																																									Convert.ToInt32(xs.Attribute(xNames.unitprice).Value)
+																																									)
+																																							)
+																																					)
+																																			);
+						}
 
             return result;
         }

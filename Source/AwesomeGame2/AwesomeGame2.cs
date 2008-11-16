@@ -10,6 +10,9 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
+using AwesomeGame2.Data;
+using SD.Shared;
+using AwesomeGame2.GameObjects;
 
 namespace AwesomeGame2
 {
@@ -22,8 +25,8 @@ namespace AwesomeGame2
 
 		private GraphicsDeviceManager _graphics;
 		private SpriteBatch _spriteBatch;
-		private Camera _camera;
-        
+		private SpriteFont _spriteFont;
+
 		public static AwesomeGame2 Instance
 		{
 			get
@@ -48,25 +51,36 @@ namespace AwesomeGame2
 		/// </summary>
 		protected override void Initialize()
 		{
-			_camera = new Camera(this);
-			this.Services.AddService(typeof(ICameraService), _camera);
-			this.Components.Add(_camera);
-
 			Input.MouseComponent mouse = new Input.MouseComponent(this);
 			this.Services.AddService(typeof(Input.IMouseService), mouse);
 			this.Components.Add(mouse);
 
-            this.Components.Add(new Sun(this, 20.0f, 90.0f));
-            this.Components.Add(new Starfield(this, _camera, 1500));
-			this.Components.Add(new Globe(this, 100, 100, Vector3.Zero, -180, 180, -90, 90, 2));
+			this.Components.Add(new Sun(this, 20.0f, 90.0f));
+
+			this.Components.Add(new Starfield(this, 1500));
+
+			Globe globe = new Globe(this, 100, 100, Vector3.Zero, -180, 180, -90, 90, 2);
+			this.Components.Add(globe);
+			this.Services.AddService(typeof(IGlobeService), globe);
 
 			Picker picker = new Picker(this);
-            this.Services.AddService(typeof(Picker), picker);
-            this.Components.Add(picker);
+			this.Services.AddService(typeof(IPickerService), picker);
+			this.Components.Add(picker);
 
 			Cursor cursor = new Cursor(this, this.Content) { DrawOrder = 1000 };
 			this.Services.AddService(typeof(ICursorService), cursor);
 			this.Components.Add(cursor);
+
+			Camera camera = new Camera(this);
+			this.Services.AddService(typeof(ICameraService), camera);
+			this.Components.Add(camera);
+
+			ILocationDataService locationData = new LocationData();
+			this.Services.AddService(typeof(ILocationDataService), locationData);
+			foreach (LocationInfo locationInfo in locationData.GetLocations())
+				this.Components.Add(new Location(this, locationInfo));
+
+			_spriteFont = this.Content.Load<SpriteFont>(@"Fonts\Calibri");
 
 			base.Initialize();
 		}
@@ -112,6 +126,14 @@ namespace AwesomeGame2
 			GraphicsDevice.Clear(Color.Black);
 
 			base.Draw(gameTime);
+
+			IPickerService picker = Services.GetService<IPickerService>();
+			if (picker.PickedModelName != null)
+			{
+				_spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
+				_spriteBatch.DrawString(_spriteFont, picker.PickedModelName, new Vector2(10, 10), Color.White);
+				_spriteBatch.End();
+			}
 		}
 	}
 }

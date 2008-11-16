@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using AwesomeGame2.Data;
+using SD.Shared;
 
 namespace AwesomeGame2
 {
-	public class Globe : DrawableGameComponent, IPickable
+	public class Globe : DrawableGameComponent, IPickable, IGlobeService
 	{
 		#region Fields
 
@@ -49,7 +51,14 @@ namespace AwesomeGame2
 			get { return _vertices; }
 		}
 
+		public float Radius
+		{
+			get { return _radius; }
+		}
+
 		#endregion
+
+		#region Constructor
 
 		public Globe(Game game,
 			int slices, int stacks, Vector3 centre,
@@ -69,6 +78,8 @@ namespace AwesomeGame2
 
 			this.World = Matrix.Identity;
 		}
+
+		#endregion
 
 		#region Methods
 

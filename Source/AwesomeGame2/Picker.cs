@@ -6,8 +6,10 @@ using System.Collections.Generic;
 
 namespace AwesomeGame2
 {
-	public class Picker : DrawableGameComponent
+	public class Picker : DrawableGameComponent, IPickerService
 	{
+		#region Fields
+
 		// To keep things efficient, the picking works by first applying a bounding
 		// sphere test, and then only bothering to test each individual triangle
 		// if the ray intersects the bounding sphere. This allows us to trivially
@@ -20,14 +22,14 @@ namespace AwesomeGame2
 		// Store the name of the model underneath the cursor (or null if there is none).
 		private string pickedModelName;
 
-        // Vertex array that stores exactly which triangle was picked.
-        private VertexPositionColor[] pickedRadius =
+		// Vertex array that stores exactly which triangle was picked.
+		private VertexPositionColor[] pickedRadius =
         {
             new VertexPositionColor(Vector3.Zero, Color.Tomato),
             new VertexPositionColor(Vector3.Zero, Color.Tomato),
         };
 
-        // Vertex array that stores exactly which triangle was picked.
+		// Vertex array that stores exactly which triangle was picked.
 		private VertexPositionColor[] pickedTriangle =
         {
             new VertexPositionColor(Vector3.Zero, Color.Magenta),
@@ -39,21 +41,34 @@ namespace AwesomeGame2
 		private BasicEffect lineEffect;
 		private VertexDeclaration lineVertexDeclaration;
 
-        public Vector3 PickedRadius
-        {
-            get
-            {
-                Vector3 lOutput = pickedRadius[1].Position;
-                lOutput.Normalize();
-                return lOutput;
-            }
-        }
+		#endregion
+
+		#region Properties
+
+		public Vector3 PickedRadius
+		{
+			get
+			{
+				Vector3 lOutput = pickedRadius[1].Position;
+				lOutput.Normalize();
+				return lOutput;
+			}
+		}
+
+		public string PickedModelName
+		{
+			get { return pickedModelName; }
+		}
+
+		#endregion
 
 		public Picker(Game game)
 			: base(game)
 		{
-
+			this.UpdateOrder = 1;
 		}
+
+		#region Methods
 
 		protected override void LoadContent()
 		{
@@ -84,22 +99,22 @@ namespace AwesomeGame2
 			insideBoundingSpheres.Clear();
 
 			pickedModelName = null;
+			pickedRadius[1].Position = Vector3.Zero;
 
 			// Keep track of the closest object we have seen so far, so we can
 			// choose the closest one if there are several models under the cursor.
 			float closestIntersection = float.MaxValue;
 
 			// Loop over all our models.
-			IEnumerable<IPickable> meshes = this.Game.Components.OfType<IPickable>();
-			foreach (IPickable mesh in meshes)
+			IEnumerable<IPickable> pickables = this.Game.Components.OfType<IPickable>();
+			foreach (IPickable pickable in pickables)
 			{
 				bool insideBoundingSphere;
 				Vector3 vertex1, vertex2, vertex3;
-                pickedRadius[1].Position = Vector3.Zero;
 
 				// Perform the ray to model intersection test.
-				float? intersection = RayIntersectsModel(cursorRay, mesh,
-																								 mesh.World,
+				float? intersection = RayIntersectsModel(cursorRay, pickable,
+																								 pickable.World,
 																								 out insideBoundingSphere,
 																								 out vertex1, out vertex2,
 																								 out vertex3);
@@ -107,7 +122,7 @@ namespace AwesomeGame2
 				// If this model passed the initial bounding sphere test, remember
 				// that so we can display it at the top of the screen.
 				if (insideBoundingSphere)
-					insideBoundingSpheres.Add(mesh.Name);
+					insideBoundingSpheres.Add(pickable.Name);
 
 				// Do we have a per-triangle intersection with this model?
 				if (intersection != null)
@@ -119,15 +134,15 @@ namespace AwesomeGame2
 						// Store information about this model.
 						closestIntersection = intersection.Value;
 
-						pickedModelName = mesh.Name;
+						pickedModelName = pickable.Name;
 
 						// Store vertex positions so we can display the picked triangle.
 						pickedTriangle[0].Position = vertex1;
 						pickedTriangle[1].Position = vertex2;
 						pickedTriangle[2].Position = vertex3;
 
-                        // Store intersection point positions so we can display the picked radius
-                        pickedRadius[1].Position = cursorRay.Direction * 2000.0f;
+						// Store intersection point positions so we can display the picked radius
+						pickedRadius[1].Position = cursorRay.Direction * 2000.0f;
 					}
 				}
 			}
@@ -339,7 +354,7 @@ namespace AwesomeGame2
 				device.VertexDeclaration = lineVertexDeclaration;
 
 				device.DrawUserPrimitives(PrimitiveType.TriangleList, pickedTriangle, 0, 1);
-                //device.DrawUserPrimitives(PrimitiveType.LineList, pickedRadius, 0, 1);
+				//device.DrawUserPrimitives(PrimitiveType.LineList, pickedRadius, 0, 1);
 
 				lineEffect.CurrentTechnique.Passes[0].End();
 				lineEffect.End();
@@ -352,5 +367,7 @@ namespace AwesomeGame2
 
 			base.Draw(gameTime);
 		}
+
+		#endregion
 	}
 }

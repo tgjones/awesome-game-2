@@ -9,13 +9,11 @@ namespace AwesomeGame2
         private VertexDeclaration vertexDeclaration;
         private VertexBuffer vertexBuffer;
         private BasicEffect basicEffect;
-        private Camera _camera;
         private int _count;
 		
-        public Starfield(Game game, Camera camera, int starCount)
+        public Starfield(Game game, int starCount)
             : base(game)
         {
-            _camera = camera;
             _count = starCount;
         }
 
@@ -68,9 +66,10 @@ namespace AwesomeGame2
             graphicsDevice.RenderState.CullMode = CullMode.None;
 
             // Set world, view and projection matrices
+						ICameraService camera = this.Game.Services.GetService<ICameraService>();
             basicEffect.World = Matrix.Identity;
-            basicEffect.View = _camera.View;
-            basicEffect.Projection = _camera.Projection;
+						basicEffect.View = camera.View;
+						basicEffect.Projection = camera.Projection;
 
             // Set the vertex declaration
             graphicsDevice.VertexDeclaration = this.vertexDeclaration;

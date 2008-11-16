@@ -10,7 +10,7 @@ namespace AwesomeGame2
         {
             effect.EnableDefaultLighting();
 
-            effect.DirectionalLight0.Direction = new Vector3(1.0f, 0.0f, 0.0f);
+            effect.DirectionalLight0.Direction = new Vector3(-1.0f, 0.0f, 0.0f);
             effect.DirectionalLight0.DiffuseColor = new Vector3(0.95f);
 
             effect.DirectionalLight1.Enabled = false;
