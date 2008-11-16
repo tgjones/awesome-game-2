@@ -66,20 +66,30 @@ namespace SD.Core
                         Console.WriteLine("Login request.");
                         LoginInfo loginInfo = new LoginInfo();
                         loginInfo.LoginSuccessful = false;
+                        string password="";
 
                         PlayerInfo playerInfo = null;
+                        string[] parameters = query.Split('&');
+
+                        foreach (string parameter in parameters)
                         {
-                            //TODO: get player_id by looking up email address in players list
-                            int player_id = 1;
-                            List<PlayerInfo> playerList = new List<PlayerInfo>();
-                            playerList.Add(_connection.GetPlayer(player_id));
-                            playerInfo = playerList[0];
+                            string[] param = parameter.Split('=');
+                            if (param[0] == "email")
+                            {
+                                playerInfo = _connection.GetPlayer(param[1]);
+                            }
+                            else if (param[0] == "password")
+                            {
+                                password = param[1];
+                            }
                         }
+
 
                         if (playerInfo == null)
                         {
                             loginInfo.LoginFailReason = "Could not identify player.";
                         }
+                        else
                         {
                             if (_sessions.FindSession(playerInfo.Id) != null)
                             {
@@ -88,16 +98,16 @@ namespace SD.Core
                             else
                             {
                                 // check authentication
-                                if (false)
-                                {
-                                    loginInfo.LoginFailReason = "Authentication failed.";
-                                }
-                                else
+                                if (password == playerInfo.Password)
                                 {
                                     SessionInfo newSession = new SessionInfo(playerInfo.Id);
                                     _sessions.Add(newSession);
                                     loginInfo.LoginSuccessful = true;
                                     loginInfo.SessionKey = newSession.session_key;
+                                }
+                                else
+                                {
+                                    loginInfo.LoginFailReason = "Authentication failed.";
                                 }
                             }
                         }
@@ -105,8 +115,6 @@ namespace SD.Core
                         XmlHelper.SerialiseLoginInfo(loginInfo, context.Response.OutputStream);
                         context.Response.OutputStream.Close();
                         break;
-
-
                     case "players":
                         Console.WriteLine("Oh the players!");
 
