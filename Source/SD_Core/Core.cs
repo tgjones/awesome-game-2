@@ -25,6 +25,7 @@ namespace SD.Core
             gameThread.IsBackground = false;
             gameThread.Start();
 
+            //Server server = new Server(@"http://localhost:54321/", _connection);
             Server server = new Server(@"http://192.168.0.103:54321/", _connection);
             new System.Threading.Thread(server.Start).Start();
 
@@ -72,6 +73,8 @@ namespace SD.Core
                 }
 
                 Console.Write('.');
+
+                database.UpdateTransporters();
 
                 // sleep for the rest of this second (assuming there is some remaining)
                 TimeSpan timeRemaining = _startTime.AddSeconds(1).Subtract(DateTime.Now);// new TimeSpan(0, 0, 1);//1000 - ((DateTime.Now.Ticks / 1000L) - _startTime); // e-7 s

@@ -381,7 +381,6 @@ namespace SD.Core
             lock (_connectionLock)
             {
                 MySqlCommand command = _connection.CreateCommand();
-                //command.CommandText = string.Format(@"SELECT S.commodity_id, S.quantity, S.price FROM location_stock S WHERE S.location_id={0};", location.Id);
                 command.CommandText = string.Format(@"SELECT S.commodity_id, S.quantity, S.bought_price FROM transporter_stock S WHERE S.transporter_id={0};", transporter.Id);
 
                 using (MySqlDataReader Reader = command.ExecuteReader())
@@ -774,6 +773,95 @@ namespace SD.Core
 
         #endregion
 
+        #region Move transporters
+        internal void UpdateTransporters()
+        {
+            if (!IsConnected)
+                throw new Exception("Not connected to database.");
+
+            // get the list of transporters
+            List<int> transporterIdList = new List<int>();
+            lock (_connectionLock)
+            {
+                MySqlCommand command = _connection.CreateCommand();
+                command.CommandText = @"SELECT T.id as tranporter_id FROM transporters T;";
+
+                using (MySqlDataReader Reader = command.ExecuteReader())
+                {
+                    while (Reader.Read())
+                    {
+                        transporterIdList.Add((int)Reader.GetUInt32("tranporter_id"));
+                    }
+                }
+            }
+
+            foreach (int transporter_id in transporterIdList)
+            {
+                lock (_connectionLock)
+                {
+                    MySqlCommand command;
+                    command = _connection.CreateCommand();
+
+                    // begin transaction
+                    command.CommandText = "start transaction;";
+                    command.ExecuteNonQuery();
+
+                    int player_id;
+                    int route_id;
+                    DateTime last_moved = DateTime.Now;
+                    decimal distance_travelled=0;
+                    int transport_type_id;
+                    int capacity;
+                    int elapsed = 0;
+
+                    decimal route_distance=0;
+                    decimal route_speed=0;
+                    decimal route_state=1;
+
+                    DateTime db_now = DateTime.Now;
+
+                    // get transporter info
+                    command.CommandText = @"SELECT T.player_id, T.route_id, T.distance_travelled, T.transport_type_id, T.capacity, R.distance, R.speed, R.state, UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(last_moved) AS elapsed
+                                            FROM transporters T, transport_routes R
+                                            WHERE T.id = " + transporter_id + " AND T.route_id = R.id;";
+
+                    using (MySqlDataReader Reader = command.ExecuteReader())
+                    {
+                        while (Reader.Read())
+                        {
+                            player_id = (int)Reader.GetUInt32("player_id");
+                            route_id = (int)Reader.GetUInt32("route_id");
+                            distance_travelled = Reader.GetDecimal("distance_travelled");
+                            transport_type_id = (int)Reader.GetUInt32("transport_type_id");
+                            capacity = (int)Reader.GetUInt32("capacity");
+                            elapsed = (int)Reader.GetUInt32("elapsed");
+
+                            route_distance = Reader.GetDecimal("distance");
+                            route_speed = Reader.GetDecimal("speed");
+                            route_state = Reader.GetDecimal("state");
+                        }
+                    }
+
+                    // update transporter position
+                    decimal newDistanceTravelled = distance_travelled + ((route_speed * route_state * (decimal)elapsed) / (decimal)3600);
+                    
+                    if (newDistanceTravelled >= route_distance)
+                    {
+                        // we've arrived! (add stock to location, delete transporter, player.balance += location_stock.price*t.load)
+                        newDistanceTravelled = route_distance;
+                    }
+                    // update the database (position of transporter)
+                    command.CommandText = string.Format(@"UPDATE transporters SET distance_travelled = {0}, last_moved=NOW() WHERE id={1};", newDistanceTravelled, transporter_id);
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = "commit;";
+                    command.ExecuteNonQuery();
+
+                }   //lock
+            }
+        }
+
+        #endregion
 
         #endregion Methods
     }
