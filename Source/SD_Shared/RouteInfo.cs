@@ -29,5 +29,14 @@ namespace SD.Shared
             PlayerId = playerId;
             State = state;
         }
+
+			public RouteInfo(int id, decimal speed, int cost, decimal state, List<LocationInfo> locations )
+        : this(id, -1, -1, -1, speed, cost, -1, state)
+			{
+				FromLocation = locations[0];
+				ToLocation = locations[1];
+			}
+       
+
     }
 }

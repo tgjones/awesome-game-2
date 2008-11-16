@@ -11,25 +11,17 @@ namespace AwesomeGame2.GameObjects
 		private SpriteBatch _spriteBatch;
 		private Texture2D _whitePixelTexture;
 		private SpriteFont _headingFont, _subHeadingFont, _paragraphFont;
+		private Route _route;
 
-		private LocationInfo _locationInfo1;
-		private LocationInfo _locationInfo2;
-
-		public int LocationID1
+		public int RouteID
 		{
-			get { return _locationInfo1.Id; }
+			get { return _route.RouteInfo.Id; }
 		}
 
-		public int LocationID2
-		{
-			get { return _locationInfo2.Id; }
-		}
-
-		public RouteInfoPanel(Game game, LocationInfo locationInfo1, LocationInfo locationInfo2)
+		public RouteInfoPanel(Game game, Route route)
 			: base(game)
 		{
-			_locationInfo1 = locationInfo1;
-			_locationInfo2 = locationInfo2;
+			_route = route;
 		}
 
 		protected override void LoadContent()
@@ -45,10 +37,9 @@ namespace AwesomeGame2.GameObjects
 		public override void Draw(GameTime gameTime)
 		{
 			_spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
-			_spriteBatch.Draw(_whitePixelTexture, new Rectangle(10, 10, 260, 150), new Color(0.6f, 0.6f, 0.6f, 0.3f));
+			_spriteBatch.Draw(_whitePixelTexture, new Rectangle(10, 10, 260, 120), new Color(0.6f, 0.6f, 0.6f, 0.3f));
 			_spriteBatch.DrawString(_headingFont, "Route", new Vector2(20, 20), Color.White);
-			_spriteBatch.DrawString(_paragraphFont, _locationInfo1.Name, new Vector2(20, 70), Color.LightGray);
-			_spriteBatch.DrawString(_paragraphFont, "to" + _locationInfo2.Name, new Vector2(20, 100), Color.LightGray);
+			_spriteBatch.DrawString(_paragraphFont, _route.Name, new Vector2(20, 70), Color.LightGray);
 			_spriteBatch.End();
 
 			base.Draw(gameTime);

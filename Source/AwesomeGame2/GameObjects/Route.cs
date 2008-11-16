@@ -10,18 +10,11 @@ namespace AwesomeGame2.GameObjects
 		private BasicEffect lineEffect;
 		private VertexDeclaration lineVertexDeclaration;
 		private VertexPositionColor[] lineVertices;
-		
-		private LocationInfo _locationInfo1;
-		private LocationInfo _locationInfo2;
 
-		public LocationInfo LocationInfo1
+		public RouteInfo RouteInfo
 		{
-			get { return _locationInfo1; }
-		}
-
-		public LocationInfo LocationInfo2
-		{
-			get { return _locationInfo2; }
+			get;
+			set;
 		}
 
 		public bool IsSelected
@@ -43,7 +36,7 @@ namespace AwesomeGame2.GameObjects
 
 		public string Name
 		{
-			get { return _locationInfo1.Name + " to " + _locationInfo2.Name; }
+			get { return "Route " + RouteInfo.Id.ToString(); }
 		}
 
 		public Matrix World
@@ -56,11 +49,10 @@ namespace AwesomeGame2.GameObjects
 			get { return this.Game.Services.GetService<IGlobeService>().BoundingSphere; }
 		}
 
-		public Route(Game game, LocationInfo locationInfo1, LocationInfo locationInfo2)
+		public Route(Game game, RouteInfo routeInfo)
 			: base(game)
 		{
-			_locationInfo1 = locationInfo1;
-			_locationInfo2 = locationInfo2;
+			this.RouteInfo = routeInfo;
 		}
 
 		protected override void LoadContent()
@@ -80,8 +72,8 @@ namespace AwesomeGame2.GameObjects
 			for (int i = 0; i < lNumberOfSegments; i++)
 			{
 				float lPercentage = i / (lNumberOfSegments - 1.0f);
-				Vector2 lLatLong1 = new Vector2((float)_locationInfo1.Latitude, (float)_locationInfo1.Longitude);
-				Vector2 lLatLong2 = new Vector2((float)_locationInfo2.Latitude, (float)_locationInfo2.Longitude);
+				Vector2 lLatLong1 = new Vector2((float)RouteInfo.FromLocation.Latitude, (float)RouteInfo.FromLocation.Longitude);
+				Vector2 lLatLong2 = new Vector2((float)RouteInfo.ToLocation.Latitude, (float)RouteInfo.ToLocation.Longitude);
 				Vector2 lLatLongI = Vector2.Lerp(lLatLong1, lLatLong2, lPercentage);
 
 				float lWidth = (i % 2 == 0) ? 0.005f : -0.005f;

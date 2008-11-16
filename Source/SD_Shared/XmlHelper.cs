@@ -70,7 +70,7 @@ namespace SD.Shared
 																											Convert.ToDecimal(xe.Attribute(xNames.latitude).Value),
 																											Convert.ToDecimal(xe.Attribute(xNames.longitude).Value),
 																											(string) xe.Attribute(xNames.name),
-                                                                                                            (LocationEnum) Enum.Parse(typeof(LocationEnum), (string) xe.Attribute(xNames.locationtype)),
+                                                                                                            (LocationEnum) Enum.Parse(typeof(LocationEnum), xe.Attribute(xNames.locationtype).Value),
 																											new List<StockInfo>(from xs in xe.Element(xNames.stocks).Elements(xNames.stock)
 																																					select
 																																							new StockInfo((ResourceEnum) Enum.Parse(typeof(ResourceEnum), (string) xs.Attribute(xNames.resourcetype)),
@@ -85,7 +85,41 @@ namespace SD.Shared
             return result;
         }
 
-        public static void SerialiseLocationList(List<LocationInfo> locationList, Stream stream)
+				public static List<RouteInfo> DeserialiseRouteList(Stream stream)
+				{
+					if (stream == null) throw new ArgumentNullException("stream");
+
+					XElement tree = null;
+					List<RouteInfo> result = null;
+
+					using (XmlReader xr = XmlReader.Create(stream))
+					{
+						tree = XElement.Load(xr);
+					}
+					if (tree != null)
+					{
+						result = new List<RouteInfo>(from xe in tree.Elements(xNames.route)
+																						select
+																								new RouteInfo((int)xe.Attribute(xNames.id),
+																										Convert.ToDecimal(xe.Attribute(xNames.speed).Value),
+																										(int)xe.Attribute(xNames.cost),
+																										Convert.ToDecimal(xe.Attribute(xNames.state).Value),
+																										new List<LocationInfo>(from xs in xe.Element(xNames.locations).Elements(xNames.location)
+																																					 select new LocationInfo((int) xs.Attribute(xNames.id),
+																																								Convert.ToDecimal(xs.Attribute(xNames.latitude).Value),
+																																								Convert.ToDecimal(xs.Attribute(xNames.longitude).Value),
+																																								(string) xs.Attribute(xNames.name),
+																																								LocationEnum.None,
+																																								new List<StockInfo>())		
+																																			)
+																																		)
+																																	);
+					}
+
+					return result;
+				}
+
+				public static void SerialiseLocationList(List<LocationInfo> locationList, Stream stream)
         {
             if (locationList == null)
                 return;

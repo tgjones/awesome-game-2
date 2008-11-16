@@ -194,14 +194,14 @@ namespace AwesomeGame2
 				bool add = true;
 				if (panel != null)
 				{
-					if (panel.LocationID1 != ((Route)SelectedPickable).LocationInfo1.Id || panel.LocationID2 != ((Route)SelectedPickable).LocationInfo2.Id)
+					if (panel.RouteID != ((Route)SelectedPickable).RouteInfo.Id)
 						this.Game.Components.Remove(panel);
 					else
 						add = false;
 				}
 				if (add)
 				{
-					panel = new RouteInfoPanel(this.Game, ((Route)SelectedPickable).LocationInfo1, ((Route)SelectedPickable).LocationInfo2);
+					panel = new RouteInfoPanel(this.Game, ((Route)SelectedPickable));
 					this.Game.Components.Add(panel);
 				}
 			}

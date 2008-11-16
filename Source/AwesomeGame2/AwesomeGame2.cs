@@ -76,12 +76,15 @@ namespace AwesomeGame2
 			this.Services.AddService(typeof(ILocationDataService), locationData);
 			List<LocationInfo> lLocations = locationData.GetLocations();
 
-			for(int i = 0; i < lLocations.Count; i++)
-			{
-				this.Components.Add(new Location(this, lLocations[i]));
-				for(int j = i + 1; j < lLocations.Count; j++)
-					this.Components.Add(new Route(this, lLocations[i], lLocations[j]));
-			}
+			foreach (LocationInfo lLocation in lLocations)
+				this.Components.Add(new Location(this, lLocation));
+
+			IRouteDataService routeData = new RouteData();
+			this.Services.AddService(typeof(IRouteDataService), routeData);
+			List<RouteInfo> lRoutes = routeData.GetRoutes();
+
+			foreach (RouteInfo lRoute in lRoutes)
+				this.Components.Add(new Route(this, lRoute));
 
 			base.Initialize();
 		}
