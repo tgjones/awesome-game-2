@@ -84,5 +84,20 @@ namespace SD.Shared
             return (List<TransporterInfo>)xs.Deserialize(stream);
         }
         #endregion //Serialise TransporterList
+
+        #region Serialise MessageList
+        public static void SerialiseMessageList(List<MessageInfo> messageList, Stream stream)
+        {
+            XmlSerializer xs = new XmlSerializer(typeof(List<MessageInfo>));
+            xs.Serialize(stream, messageList);
+        }
+
+        public static List<MessageInfo> DeserialiseMessageList(Stream stream)
+        {
+            XmlSerializer xs = new XmlSerializer(typeof(List<MessageInfo>));
+            return (List<MessageInfo>)xs.Deserialize(stream);
+        }
+
+        #endregion // Serialise MessageList
     }
 }

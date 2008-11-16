@@ -150,6 +150,32 @@ namespace SD.Core
 
                         context.Response.OutputStream.Close();
                         break;
+                    case "messages":
+                        List<MessageInfo> messages;
+
+                        //if (query.Length > 0)
+                        //{
+                        //    string[] queries = query.Split('=');
+                        //    if (queries[0] == "id")
+                        //        messages = new List<MessageInfo>(_connection.GetMessages(int.Parse(queries[1])));
+                        //    else
+                        //        messages = new List<MessageInfo>(_connection.GetMessages());
+                        //}
+                        //else
+                        //{
+                            messages = new List<MessageInfo>(_connection.GetMessages());
+                        //}
+
+                        foreach (MessageInfo message in messages)
+                        {
+                            message.FromPlayer = (PlayerInfo)_connection.GetPlayers(message.FromPlayerId).First();
+                            message.ToPlayer = (PlayerInfo)_connection.GetPlayers(message.ToPlayerId).First();
+                        }
+
+                        XmlHelper.SerialiseMessageList(messages, context.Response.OutputStream);
+
+                        context.Response.OutputStream.Close();
+                        break;
                     default:
                         break;
                 }

@@ -353,6 +353,39 @@ namespace SD.Core
         }
 
         /// <summary>
+        /// Retrieve a list of all messages from the database
+        /// </summary>
+        internal IEnumerable<MessageInfo> GetMessages()
+        {
+            if (!IsConnected)
+                throw new Exception("Not connected to database.");
+
+            List<MessageInfo> messages = new List<MessageInfo>();
+
+            MySqlCommand command = _connection.CreateCommand();
+            command.CommandText = @"SELECT M.id, M.to_player_id, M.from_player_id, M.subject, M.body FROM messages M;";
+
+            lock (_connectionLock)
+            {
+                using (MySqlDataReader Reader = command.ExecuteReader())
+                {
+                    while (Reader.Read())
+                    {
+                        int id = (int)Reader.GetUInt32(0);
+                        int to_player_id = (int)Reader.GetUInt32(1);
+                        int from_player_id = (int)Reader.GetUInt32(2);
+                        string subject = Reader.GetString(3);
+                        string body = Reader.GetString(4);
+
+                        MessageInfo messageInfo = new MessageInfo(id, to_player_id, from_player_id, subject, body);
+                        messages.Add(messageInfo);
+                    }
+                }
+            }
+            return (messages);
+        }
+
+        /// <summary>
         /// Retrieve a route from the database by id
         /// </summary>
         internal IEnumerable<RouteInfo> GetRoutes(int query_id)

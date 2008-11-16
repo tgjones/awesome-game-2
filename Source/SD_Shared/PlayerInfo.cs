@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace SD.Shared
 {
@@ -9,7 +10,7 @@ namespace SD.Shared
     {
         public int Id { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
+        [XmlIgnore] public string Password { get; set; }
         public string Name { get; set; }
         public DateTime Joined { get; set; }
         public DateTime LastLogin { get; set; }
