@@ -60,9 +60,9 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
-	float4 lightAmbient = { 0.3f, 0.3f, 0.3f, 1.0f };
+	float4 lightAmbient = { 0.2f, 0.2f, 0.2f, 1.0f };
 	float4 lightDiffuse = { 1.0f, 0.95f, 0.8f, 1.0f };
-	float3 lightDirection = mul(float3(1.0f, 0.0f, 0.0f), InverseWorld);
+	float3 lightDirection = normalize(mul(float3(1.0f, 0.0f, 0.0f), InverseWorld));
 	float3 normal = normalize(GetNormal(input.Normal, input.TexCoord, input.TangentToWorld));
 	float3 viewDirection = normalize(input.ViewDirection);
 	
