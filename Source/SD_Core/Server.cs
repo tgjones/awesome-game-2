@@ -60,7 +60,17 @@ namespace SD.Core
 
                 Console.WriteLine("So path is now " + path + " and query is " + query);
 
+                // split the parameters into a handy dictionary
                 Dictionary<string, string> paramDict = SeparateParameters(query);
+
+                // see if a session key was provided, and get the player_id for authenticated player
+                int authenticatedPlayerId = -1;
+                if (paramDict.ContainsKey("sessionkey"))
+                {
+                    SessionInfo authenticatedSession = _sessions.FindSession(new Guid(paramDict["sessionkey"]));
+                    if (authenticatedSession != null)
+                        authenticatedPlayerId = authenticatedSession.player_id;
+                }
 
                 switch (path)
                 {
@@ -118,7 +128,7 @@ namespace SD.Core
                         context.Response.OutputStream.Close();
                         break;
                     case "logout":
-                        if (paramDict.ContainsKey("sessionkey")
+                        if (paramDict.ContainsKey("sessionkey"))
                         {
                             _sessions.Remove(_sessions.FindSession(new Guid(paramDict["sessionkey"])));
                         }
@@ -128,28 +138,17 @@ namespace SD.Core
 
                         List<PlayerInfo> players = new List<PlayerInfo>();
 
-                        SessionInfo session = null;
-                        if (query.Length > 0)
-                        {
-                            if (paramDict.ContainsKey("sessionkey"))
-                                session = _sessions.FindSession(new Guid(paramDict["sessionkey"]));
-
-                            if (paramDict.ContainsKey("id"))
-                                players.Add(_connection.GetPlayer(int.Parse(paramDict["id"])));
-                            else if (paramDict.ContainsKey("email"))
-                                players.Add(_connection.GetPlayer(paramDict["email"]));
-                            else
-                                players.AddRange(_connection.GetPlayers());
-                        }
+                        if (paramDict.ContainsKey("id"))
+                            players.Add(_connection.GetPlayer(int.Parse(paramDict["id"])));
+                        else if (paramDict.ContainsKey("email"))
+                            players.Add(_connection.GetPlayer(paramDict["email"]));
                         else
-                        {
                             players.AddRange(_connection.GetPlayers());
-                        }
 
                         // don't expose private data
                         foreach (PlayerInfo player in players)
                         {
-                            if (session == null || player.Id != session.player_id)
+                            if (player.Id != authenticatedPlayerId)
                             {
                                 player.Email = "[private]";
                                 player.Balance = int.MinValue;
