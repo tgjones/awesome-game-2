@@ -191,6 +191,8 @@ namespace AwesomeGame2
 		{
 			ICameraService camera = this.Game.Services.GetService<ICameraService>();
 			_effect.Parameters["WorldViewProjection"].SetValue(this.World * camera.View * camera.Projection);
+			_effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(this.World));
+			_effect.Parameters["CullMode"].SetValue((int) CullMode.CullClockwiseFace);
 
 			this.GraphicsDevice.VertexDeclaration = _vertexDeclaration;
             

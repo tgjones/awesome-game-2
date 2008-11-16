@@ -38,6 +38,10 @@ namespace AwesomeGame2
 		{
 			_graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
+
+			//_graphics.PreferredBackBufferWidth = 1680;
+			//_graphics.PreferredBackBufferHeight = 1080;
+			//_graphics.IsFullScreen = true;
 		}
 
 		/// <summary>

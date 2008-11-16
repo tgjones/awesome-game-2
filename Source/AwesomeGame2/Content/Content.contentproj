@@ -69,13 +69,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\simplefactory.x">
-      <Name>simplefactory</Name>
-      <Importer>XImporter</Importer>
-      <Processor>TrianglePickingProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Fonts\Heading.spritefont">
       <Name>Heading</Name>
       <Importer>FontDescriptionImporter</Importer>
@@ -183,6 +176,247 @@
       <Name>SubHeading</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\StockSign.x">
+      <Name>StockSign</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Effects\Factory.fx">
+      <Name>Factory</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
+    <None Include="Effects\ShaderCore.fxh">
+      <Name>ShaderCore</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </None>
+    <Compile Include="Models\LocationTypes\Aggregates.x">
+      <Name>Aggregates</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Arable_Farm.x">
+      <Name>Arable_Farm</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Building_Site.x">
+      <Name>Building_Site</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Coal_Mine.x">
+      <Name>Coal_Mine</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Dairy_Farm.x">
+      <Name>Dairy_Farm</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Derek.x">
+      <Name>Derek</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Diamond_Mine.x">
+      <Name>Diamond_Mine</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Forest.x">
+      <Name>Forest</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Printing_Press.x">
+      <Name>Printing_Press</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Quarry.x">
+      <Name>Quarry</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Rubbish_Dump.x">
+      <Name>Rubbish_Dump</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Brewery.x">
+      <Name>Brewery</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Clothes_Factory.x">
+      <Name>Clothes_Factory</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Oil_Well.x">
+      <Name>Oil_Well</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\High_Tech_Factory.x">
+      <Name>High_Tech_Factory</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Paper_Mill.x">
+      <Name>Paper_Mill</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Plastic_Factory.x">
+      <Name>Plastic_Factory</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Refinery.x">
+      <Name>Refinery</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Toy_Factory.x">
+      <Name>Toy_Factory</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Well.x">
+      <Name>Well</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Workshop.x">
+      <Name>Workshop</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\City.x">
+      <Name>City</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Power_Station.x">
+      <Name>Power_Station</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+    <Compile Include="Models\LocationTypes\Steel_Refinery.x">
+      <Name>Steel_Refinery</Name>
+      <Importer>XImporter</Importer>
+      <Processor>TrianglePickingProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Textures\Icons\beer.bmp">
+      <Name>beer</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\books.bmp">
+      <Name>books</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\Coal.bmp">
+      <Name>Coal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\concrete.bmp">
+      <Name>concrete</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\crops.bmp">
+      <Name>crops</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\electronics.bmp">
+      <Name>electronics</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\fuel.bmp">
+      <Name>fuel</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\gems.bmp">
+      <Name>gems</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\livestock.bmp">
+      <Name>livestock</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\luxuries.bmp">
+      <Name>luxuries</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\milk.bmp">
+      <Name>milk</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\oil.bmp">
+      <Name>oil</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\paper.bmp">
+      <Name>paper</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\plastics.bmp">
+      <Name>plastics</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\rubbish.bmp">
+      <Name>rubbish</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\steel.bmp">
+      <Name>steel</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\stone.bmp">
+      <Name>stone</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\toys.bmp">
+      <Name>toys</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\water.bmp">
+      <Name>water</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Textures\Icons\wood.bmp">
+      <Name>wood</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\v3.0\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

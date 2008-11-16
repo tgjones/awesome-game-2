@@ -47,7 +47,7 @@ namespace AwesomeGame2.GameObjects
 		{
 			_spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
 			_spriteBatch.Draw(_whitePixelTexture, new Rectangle(10, 10, 260, 300), new Color(0.6f, 0.6f, 0.6f, 0.3f));
-			_spriteBatch.DrawString(_headingFont, "Location", new Vector2(20, 20), Color.White);
+			_spriteBatch.DrawString(_headingFont, _locationInfo.Name, new Vector2(20, 20), Color.White);
 			_spriteBatch.DrawString(_paragraphFont, "This is the location", new Vector2(20, 70), Color.LightGray);
 			_spriteBatch.DrawString(_paragraphFont, "description. Blah blah blah.", new Vector2(20, 100), Color.LightGray);
 			_spriteBatch.DrawString(_subHeadingFont, "Stocks", new Vector2(20, 150), Color.White);

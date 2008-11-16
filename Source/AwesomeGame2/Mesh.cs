@@ -8,6 +8,12 @@ namespace AwesomeGame2
 	public class Mesh : DrawableGameComponent, IPickable
 	{
 		private string _assetName;
+		private Effect _effect;
+
+		public Effect Effect
+		{
+			get { return _effect; }
+		}
 
 		public bool IsSelected
 		{
@@ -28,6 +34,12 @@ namespace AwesomeGame2
 		}
 
 		public string Name
+		{
+			get;
+			set;
+		}
+
+		public Texture Texture
 		{
 			get;
 			set;
@@ -79,26 +91,54 @@ namespace AwesomeGame2
 			base.Initialize();
 		}
 
+		protected override void LoadContent()
+		{
+			_effect = this.Game.Content.Load<Effect>(@"Effects\Factory");
+			base.LoadContent();
+		}
+
 		public override void Draw(GameTime gameTime)
 		{
 			ICameraService camera = this.Game.Services.GetService<ICameraService>();
+			Matrix wvp = this.World * camera.View * camera.Projection;
 
 			Matrix[] transforms = new Matrix[this.Model.Bones.Count];
 			this.Model.CopyAbsoluteBoneTransformsTo(transforms);
-			foreach (ModelMesh mesh in this.Model.Meshes)
-			{
-				foreach (BasicEffect effect in mesh.Effects)
-				{
-					effect.World = transforms[mesh.ParentBone.Index] * this.World;
-					effect.View = camera.View;
-					effect.Projection = camera.Projection;
 
-					Sunlight.ApplyToBasicEffect(effect);
-					effect.SpecularColor = Vector3.Zero;
+			_effect.Begin(SaveStateMode.SaveState);
+			foreach (EffectPass effectPass in _effect.CurrentTechnique.Passes)
+			{
+				effectPass.Begin();
+				
+				foreach (ModelMesh mesh in this.Model.Meshes)
+				{
+					this.GraphicsDevice.Indices = mesh.IndexBuffer;
+					foreach (ModelMeshPart meshPart in mesh.MeshParts)
+					{
+						Texture texture = null;
+						if (this.Texture != null)
+							texture = this.Texture;
+						else
+							texture = ((BasicEffect) meshPart.Effect).Texture;
+						_effect.Parameters["Texture"].SetValue(texture);
+						_effect.Parameters["TextureEnabled"].SetValue(((BasicEffect) meshPart.Effect).TextureEnabled);
+						_effect.Parameters["DiffuseColour"].SetValue(((BasicEffect) meshPart.Effect).DiffuseColor);
+						_effect.Parameters["WorldViewProjection"].SetValue(transforms[mesh.ParentBone.Index] * wvp);
+						_effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(this.World));
+						_effect.Parameters["CullMode"].SetValue((int) CullMode.CullCounterClockwiseFace);
+						_effect.CommitChanges();
+
+						this.GraphicsDevice.VertexDeclaration = meshPart.VertexDeclaration;
+						this.GraphicsDevice.Vertices[0].SetSource(mesh.VertexBuffer, 0, meshPart.VertexStride);
+						this.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList,
+							meshPart.BaseVertex, meshPart.StartIndex, meshPart.NumVertices,
+							meshPart.StartIndex, meshPart.PrimitiveCount);
+					}
 				}
 
-				mesh.Draw();
+				effectPass.End();
 			}
+			_effect.End();
 
 			base.Draw(gameTime);
 		}
