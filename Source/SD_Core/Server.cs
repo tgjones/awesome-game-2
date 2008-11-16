@@ -190,17 +190,13 @@ namespace SD.Core
                         break;
 
                     case "transporters":
-                        List<TransporterInfo> transporters;
-                        
-                        transporters = new List<TransporterInfo>(_connection.GetTransporters());
-
+                        List<TransporterInfo> transporters = new List<TransporterInfo>();
+                        transporters.AddRange(_connection.GetTransporters(authenticatedPlayerId));
+                        // update info on these stock
                         foreach (TransporterInfo transporter in transporters)
-                        {
                             _connection.UpdateStockInfo(transporter);
-                        }
 
                         XmlHelper.SerialiseTransporterList(transporters, context.Response.OutputStream);
-
                         context.Response.OutputStream.Close();
                         break;
 

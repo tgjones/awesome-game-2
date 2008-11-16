@@ -315,6 +315,11 @@ namespace SD.Core
             return (transporters);
         }
 
+        internal IEnumerable<TransporterInfo> GetTransporters(int player_id)
+        {
+            return GetTransporters().Where(t => t.PlayerId == player_id);
+        }
+
         /// <summary>
         /// Retrieve a list of all routes from the database
         /// </summary>
