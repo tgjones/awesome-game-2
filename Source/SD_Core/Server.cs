@@ -124,6 +124,21 @@ namespace SD.Core
 
                         context.Response.OutputStream.Close();
                         break;
+                    case "routes":
+                        List<RouteInfo> routes;
+
+                        routes = new List<RouteInfo>(_connection.GetRoutes());
+
+                        foreach (RouteInfo route in routes)
+                        {
+                            route.FromLocation = (LocationInfo)_connection.GetLocations(route.FromLocationId).First();
+                            route.ToLocation = (LocationInfo)_connection.GetLocations(route.ToLocationId).First();
+                        }
+
+                        XmlHelper.SerialiseRouteList(routes, context.Response.OutputStream);
+
+                        context.Response.OutputStream.Close();
+                        break;
                     default:
                         break;
                 }

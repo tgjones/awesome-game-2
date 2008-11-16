@@ -41,6 +41,13 @@ namespace SD.Shared
             internal const string capacity = "capacity";
             internal const string transporttypeid = "transporttypeid";
             internal const string boughtprice = "boughtprice";
+            internal const string routes = "routes";
+            internal const string route = "route";
+            internal const string fromlocationid = "fromlocationid";
+            internal const string tolocationid = "tolocationid";
+            internal const string speed = "speed";
+            internal const string cost = "cost";
+            internal const string state = "state";
         }
 
         public static List<LocationInfo> DeserialiseLocationList(Stream stream)
@@ -126,6 +133,43 @@ namespace SD.Shared
                         new XAttribute(xNames.balance, l.Balance)
                         )
                     );
+
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            XmlWriter writer = XmlWriter.Create(stream, settings);
+            tree.WriteTo(writer);
+            writer.Flush();
+        }
+
+        public static void SerialiseRouteList(List<RouteInfo> routeList, Stream stream)
+        {
+           if (routeList == null)
+                return;
+
+            XElement tree = new XElement(xNames.routes,
+                from l in routeList
+                select
+                    new XElement(xNames.route,
+                        new XAttribute(xNames.id, l.Id),
+                        new XAttribute(xNames.speed, l.Speed),
+                        new XAttribute(xNames.cost, l.Cost),
+                        new XAttribute(xNames.state, l.State),
+                        new XElement(xNames.locations,
+                            new XElement(xNames.location,
+                                new XAttribute(xNames.id, l.FromLocationId),
+                                new XAttribute(xNames.latitude, l.FromLocation.Latitude),
+                                new XAttribute(xNames.longitude, l.FromLocation.Longitude),
+                                new XAttribute(xNames.name, l.FromLocation.Name)
+                            ),
+                            new XElement(xNames.location,
+                                new XAttribute(xNames.id, l.ToLocationId),
+                                new XAttribute(xNames.latitude, l.ToLocation.Latitude),
+                                new XAttribute(xNames.longitude, l.ToLocation.Longitude),
+                                new XAttribute(xNames.name, l.ToLocation.Name)
+                            )
+                        )
+                    )
+                );
 
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;

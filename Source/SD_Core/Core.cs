@@ -25,8 +25,8 @@ namespace SD.Core
             gameThread.IsBackground = false;
             gameThread.Start();
 
-            //Server server = new Server(@"http://localhost:54321/", _connection);
-            Server server = new Server(@"http://192.168.0.103:54321/", _connection);
+            Server server = new Server(@"http://localhost:54321/", _connection);
+            //Server server = new Server(@"http://192.168.0.103:54321/", _connection);
             new System.Threading.Thread(server.Start).Start();
 
         }
