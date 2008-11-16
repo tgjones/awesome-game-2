@@ -920,12 +920,21 @@ namespace SD.Core
                     
                     if (newDistanceTravelled >= route_distance)
                     {
-                        // we've arrived! (add stock to location, delete transporter, player.balance += location_stock.price*t.load)
+                        // we've arrived so don't overshoot!
                         newDistanceTravelled = route_distance;
+                        if (newDistanceTravelled != distance_travelled)
+                        {
+                            // we've JUST arrived
+                            // (add stock to location, delete transporter, player.balance += location_stock.price*t.load)
+                            // Actually, just notify the player - they can sell the goods if they want
+                        }
                     }
                     // update the database (position of transporter)
-                    command.CommandText = string.Format(@"UPDATE transporters SET distance_travelled = {0}, last_moved=NOW() WHERE id={1};", newDistanceTravelled, transporter_id);
-                    command.ExecuteNonQuery();
+                    if (newDistanceTravelled != distance_travelled)
+                    {
+                        command.CommandText = string.Format(@"UPDATE transporters SET distance_travelled = {0}, last_moved=NOW() WHERE id={1};", newDistanceTravelled, transporter_id);
+                        command.ExecuteNonQuery();
+                    }
 
                     command.CommandText = "commit;";
                     command.ExecuteNonQuery();
