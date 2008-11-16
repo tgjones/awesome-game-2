@@ -18,7 +18,7 @@ namespace AwesomeGame2.Data
 				{
 					try
 					{
-						Stream locationsStream = webClient.OpenRead("http://192.168.0.103:54321/players");
+						Stream locationsStream = webClient.OpenRead("http://80.82.119.156:54321/players");
 						_cachedLocations = XmlHelper.DeserialisePlayerList(locationsStream);
 					}
 					catch
@@ -28,6 +28,15 @@ namespace AwesomeGame2.Data
 				}
 			}
 			return _cachedLocations;
+		}
+
+		public LoginInfo GetLoginInfo(PlayerInfo player)
+		{
+			using (WebClient webClient = new WebClient())
+			{
+				Stream locationsStream = webClient.OpenRead("http://80.82.119.156:54321/login?email=" + player.Email + "&password=password");
+				return XmlHelper.DeserialiseLoginInfo(locationsStream);
+			}
 		}
 	}
 }

@@ -19,7 +19,7 @@ namespace AwesomeGame2.Data
 				{
 					try
 					{
-						Stream locationsStream = webClient.OpenRead("http://192.168.0.103:54321/locations");
+						Stream locationsStream = webClient.OpenRead("http://80.82.119.156:54321/locations");
 						_cachedLocations = XmlHelper.DeserialiseLocationList(locationsStream);
 					}
 					catch
@@ -35,12 +35,11 @@ namespace AwesomeGame2.Data
 		{
 			using (WebClient webClient = new WebClient())
 			{
-				Stream locationsStream = webClient.OpenRead("http://192.168.0.103:54321/locations?id=" + id);
+				Stream locationsStream = webClient.OpenRead("http://80.82.119.156:54321/locations?id=" + id);
 				return XmlHelper.DeserialiseLocationList(locationsStream)[0];
 			}
 		}
-
-
+		
 		public Texture2D GetResourceTexture(ResourceEnum resourceType)
 		{
 			return AwesomeGame2.Instance.Content.Load<Texture2D>(@"Textures\Icons\" + resourceType.ToString());

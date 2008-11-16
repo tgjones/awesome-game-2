@@ -80,9 +80,11 @@ namespace AwesomeGame2.GameObjects
 			DrawString(font, text, false);
 		}
 
-		protected void DrawString(SpriteFont font, string text, bool enableSelection)
+		protected bool DrawString(SpriteFont font, string text, bool enableSelection)
 		{
+			bool lSelected = false;
 			Color lDrawColor = new Color(Color.White, _alpha);
+
 			if (enableSelection)
 			{
 				Input.IMouseService lMouseService = this.Game.Services.GetService<Input.IMouseService>();
@@ -92,7 +94,8 @@ namespace AwesomeGame2.GameObjects
 					lMouseService.Y > y &&
 					lMouseService.Y < (y + font.LineSpacing))
 				{
-					lDrawColor = new Color(Color.PowderBlue, _alpha); // hover
+					lDrawColor = new Color(Color.PowderBlue, _alpha);
+					lSelected = lMouseService.LeftClickPressed;
 				}
 			}
 
@@ -100,6 +103,8 @@ namespace AwesomeGame2.GameObjects
 				_spriteBatch.DrawString(font, text, new Vector2(x + 4, y), lDrawColor);
 
 			y += font.LineSpacing;
+
+			return lSelected;
 		}
 
 		protected abstract string GetTitle();

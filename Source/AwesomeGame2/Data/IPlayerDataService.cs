@@ -8,5 +8,6 @@ namespace AwesomeGame2.Data
 	public interface IPlayerDataService
 	{
 		List<PlayerInfo> GetPlayers();
+		LoginInfo GetLoginInfo(PlayerInfo player);
 	}
 }

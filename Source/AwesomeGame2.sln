@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+# Visual C# Express 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AwesomeGame2", "AwesomeGame2\AwesomeGame2.csproj", "{BD287692-0380-4A97-8967-D67ECF0E1A5A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AwesomeGame2.ContentPipeline", "AwesomeGame2.ContentPipeline\AwesomeGame2.ContentPipeline.csproj", "{91854F10-C5B3-4AC7-90BD-626DFC7A13D2}"

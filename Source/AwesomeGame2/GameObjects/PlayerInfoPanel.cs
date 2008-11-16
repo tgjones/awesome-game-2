@@ -10,6 +10,7 @@ namespace AwesomeGame2.GameObjects
 	public class PlayerInfoPanel : InfoPanel
 	{
 		private PlayerInfo _playerInfo;
+
 		private List<PlayerInfo> _playerInfos;
 
 		protected override string GetTitle()
@@ -26,9 +27,22 @@ namespace AwesomeGame2.GameObjects
 
 		protected override void DrawDetail()
 		{
-			DrawString(_headingFont, "Login as:");
-			foreach (PlayerInfo player in _playerInfos)
-				DrawString(_paragraphFont, "   " + player.Email, true);
+			if (_playerInfo != null)
+			{
+				DrawString(_headingFont, _playerInfo.Name);
+				DrawString(_paragraphFont, _playerInfo.Email);
+			}
+			else
+			{
+				DrawString(_headingFont, "Login as:");
+				foreach (PlayerInfo player in _playerInfos)
+					if (DrawString(_paragraphFont, "   " + player.Email, true))
+					{
+						IPlayerDataService playerData = this.Game.Services.GetService<IPlayerDataService>();
+						playerData.GetLoginInfo(player);
+						_playerInfo = player;
+					}
+			}
 		}
 	}
 }
