@@ -70,14 +70,14 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 	
 	// R = 2 * (N.L) * N - L
 	float3 reflect = normalize(2.0f * nDotL * normal - lightDirection);
-	float4 specular = pow(saturate(dot(reflect, viewDirection)), 32.0f); // R.V^n
+	float4 specular = pow(saturate(dot(reflect, viewDirection)), 15.0f); // R.V^n
 	specular.a = 1.0f;
 	specular *= GetSpecularFactor(input.TexCoord);
 	
 	// I = Acolor + Dcolor * N.L + (R.V)n
 	float4 diffuse = saturate(nDotL * lightDiffuse);
 	diffuse.a = 1.0f;
-	return (lightAmbient + diffuse) * GetColour(input.TexCoord) + specular * float4(0.3f, 0.3f, 0.3f, 1.0f);
+	return (lightAmbient + diffuse) * GetColour(input.TexCoord, nDotL) + specular * float4(0.3f, 0.3f, 0.3f, 1.0f);
 }
 
 float4 SimplePixelShaderFunction(VertexShaderOutput input) : COLOR0

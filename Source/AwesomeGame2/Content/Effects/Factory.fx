@@ -21,10 +21,10 @@ float3 GetNormal(float3 normal, float2 texCoord, float3x3 tangentToWorld)
 
 float GetSpecularFactor(float2 texCoord)
 {
-	return 32.0f;
+	return 1.0f;
 }
 
-float4 GetColour(float2 texCoord)
+float4 GetColour(float2 texCoord, float3 nDotL)
 {
 	if (TextureEnabled)
 		return tex2D(TextureSampler, texCoord);

@@ -105,6 +105,7 @@ namespace AwesomeGame2
 			_effect.Parameters["DayTexture"].SetValue(this.Game.Content.Load<Texture2D>(@"Textures\Globe\EarthDay"));
 			_effect.Parameters["BumpTexture"].SetValue(this.Game.Content.Load<Texture2D>(@"Textures\Globe\EarthBump"));
 			_effect.Parameters["SpecularTexture"].SetValue(this.Game.Content.Load<Texture2D>(@"Textures\Globe\EarthSpecular"));
+			_effect.Parameters["NightTexture"].SetValue(this.Game.Content.Load<Texture2D>(@"Textures\Globe\EarthNight"));
 
 			base.LoadContent();
 		}

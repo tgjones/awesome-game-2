@@ -1,6 +1,7 @@
 const texture DayTexture;
 const texture BumpTexture;
 const texture SpecularTexture;
+const texture NightTexture;
 
 sampler DayTextureSampler = 
 sampler_state
@@ -35,6 +36,17 @@ sampler_state
     AddressV = Clamp;
 };
 
+sampler NightSampler = 
+sampler_state
+{
+    Texture = <NightTexture>;
+    MinFilter = Linear;
+    MagFilter = Linear;
+    MipFilter = Linear;
+    AddressU = Clamp;
+    AddressV = Clamp;
+};
+
 float3 GetNormal(float3 normal, float2 texCoord, float3x3 tangentToWorld)
 {
 	// look up the normal from the normal map, and transform from tangent space
@@ -51,10 +63,12 @@ float GetSpecularFactor(float2 texCoord)
 	return tex2D(SpecularSampler, texCoord).r;
 }
 
-float4 GetColour(float2 texCoord)
+float4 GetColour(float2 texCoord, float nDotL)
 {
-	return tex2D(DayTextureSampler, texCoord)
-		;//* tex2D(DetailTextureSampler, texCoord * 20);
+	float4 colour = tex2D(DayTextureSampler, texCoord) * saturate(nDotL)
+		+ tex2D(NightSampler, texCoord) * (1.0f - saturate(nDotL));
+	colour.a = 1.0f;
+	return colour;
 }
 
 const int CullMode;

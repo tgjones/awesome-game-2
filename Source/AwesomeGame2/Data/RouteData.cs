@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SD.Shared;
 using System.Net;
 using System.IO;
+using System.Configuration;
 
 namespace AwesomeGame2.Data
 {
@@ -18,7 +19,7 @@ namespace AwesomeGame2.Data
 				{
 					try
 					{
-						Stream locationsStream = webClient.OpenRead("http://192.168.0.105:54321/routes");
+						Stream locationsStream = webClient.OpenRead(ConfigurationManager.AppSettings["Server"] + "/routes");
 						_cachedLocations = XmlHelper.DeserialiseRouteList(locationsStream);
 					}
 					catch
@@ -34,7 +35,7 @@ namespace AwesomeGame2.Data
 		{
 			using (WebClient webClient = new WebClient())
 			{
-				Stream locationsStream = webClient.OpenRead("http://192.168.0.105:54321/routes?id=" + id);
+				Stream locationsStream = webClient.OpenRead(ConfigurationManager.AppSettings["Server"] + "/routes?id=" + id);
 				return XmlHelper.DeserialiseRouteList(locationsStream)[0];
 			}
 		}
