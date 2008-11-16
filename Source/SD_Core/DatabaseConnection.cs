@@ -353,6 +353,42 @@ namespace SD.Core
         }
 
         /// <summary>
+        /// Retrieve a route from the database by id
+        /// </summary>
+        internal IEnumerable<RouteInfo> GetRoutes(int query_id)
+        {
+            if (!IsConnected)
+                throw new Exception("Not connected to database.");
+
+            List<RouteInfo> routes = new List<RouteInfo>();
+
+            MySqlCommand command = _connection.CreateCommand();
+            command.CommandText = string.Format(@"SELECT R.id, R.from_location_id, R.to_location_id, R.distance, R.speed, R.cost, R.player_id, R.state FROM transport_routes R WHERE R.id={0};", query_id);
+
+            lock (_connectionLock)
+            {
+                using (MySqlDataReader Reader = command.ExecuteReader())
+                {
+                    while (Reader.Read())
+                    {
+                        int id = (int)Reader.GetUInt32(0);
+                        int from_location_id = (int)Reader.GetUInt32(1);
+                        int to_location_id = (int)Reader.GetUInt32(2);
+                        decimal distance = Reader.GetDecimal(3);
+                        decimal speed = Reader.GetDecimal(4);
+                        int cost = (int)Reader.GetUInt32(5);
+                        int player_id = (int)Reader.GetUInt32(6);
+                        decimal state = Reader.GetDecimal(7);
+
+                        RouteInfo routeInfo = new RouteInfo(id, from_location_id, to_location_id, distance, speed, cost, player_id, state);
+                        routes.Add(routeInfo);
+                    }
+                }
+            }
+            return (routes);
+        }
+
+        /// <summary>
         /// Update the stock levels for a location from the database.
         /// </summary>
         /// <param name="location">The location to update the stock levels for.</param>

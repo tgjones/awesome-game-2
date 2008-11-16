@@ -127,7 +127,18 @@ namespace SD.Core
                     case "routes":
                         List<RouteInfo> routes;
 
-                        routes = new List<RouteInfo>(_connection.GetRoutes());
+                        if (query.Length > 0)
+                        {
+                            string[] queries = query.Split('=');
+                            if (queries[0] == "id")
+                                routes = new List<RouteInfo>(_connection.GetRoutes(int.Parse(queries[1])));
+                            else
+                                routes = new List<RouteInfo>(_connection.GetRoutes());
+                        }
+                        else
+                        {
+                            routes = new List<RouteInfo>(_connection.GetRoutes());
+                        }
 
                         foreach (RouteInfo route in routes)
                         {
