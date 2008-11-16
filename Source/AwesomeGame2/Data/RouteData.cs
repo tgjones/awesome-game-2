@@ -16,8 +16,15 @@ namespace AwesomeGame2.Data
 			{
 				using (WebClient webClient = new WebClient())
 				{
-					Stream locationsStream = webClient.OpenRead("http://192.168.0.103:54321/routes");
-					_cachedLocations = XmlHelper.DeserialiseRouteList(locationsStream);
+					try
+					{
+						Stream locationsStream = webClient.OpenRead("http://192.168.0.103:54321/routes");
+						_cachedLocations = XmlHelper.DeserialiseRouteList(locationsStream);
+					}
+					catch
+					{
+						_cachedLocations = new List<RouteInfo>();
+					}
 				}
 			}
 			return _cachedLocations;
