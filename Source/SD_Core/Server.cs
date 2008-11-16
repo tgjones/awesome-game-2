@@ -60,6 +60,8 @@ namespace SD.Core
 
                 Console.WriteLine("So path is now " + path + " and query is " + query);
 
+                Dictionary<string, string> paramDict = SeparateParameters(query);
+
                 switch (path)
                 {
                     case "login":
@@ -115,6 +117,12 @@ namespace SD.Core
                         XmlHelper.SerialiseLoginInfo(loginInfo, context.Response.OutputStream);
                         context.Response.OutputStream.Close();
                         break;
+                    case "logout":
+                        if (paramDict.ContainsKey("sessionkey")
+                        {
+                            _sessions.Remove(_sessions.FindSession(new Guid(paramDict["sessionkey"])));
+                        }
+                        break;
                     case "players":
                         Console.WriteLine("Oh the players!");
 
@@ -123,8 +131,6 @@ namespace SD.Core
                         SessionInfo session = null;
                         if (query.Length > 0)
                         {
-                            Dictionary<string, string> paramDict = SeparateParameters(query);
-
                             if (paramDict.ContainsKey("sessionkey"))
                                 session = _sessions.FindSession(new Guid(paramDict["sessionkey"]));
 
