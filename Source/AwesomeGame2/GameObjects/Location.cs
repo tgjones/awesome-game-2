@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using SD.Shared;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
+using AwesomeGame2.Data;
 
 namespace AwesomeGame2.GameObjects
 {
@@ -83,7 +84,8 @@ namespace AwesomeGame2.GameObjects
 			foreach (StockInfo stock in _locationInfo.Stocks)
 			{
 				Mesh stockMesh = new Mesh(this.Game, @"Models\StockSign");
-				stockMesh.Texture = this.Game.Content.Load<Texture>(@"Textures\Icons\" + stock.ResourceType.ToString());
+				ILocationDataService locationData = this.Game.Services.GetService<ILocationDataService>();
+				stockMesh.Texture = locationData.GetResourceTexture(stock.ResourceType);
 				stockMesh.Initialize();
 				_stockMeshes.Add(stockMesh);
 			}

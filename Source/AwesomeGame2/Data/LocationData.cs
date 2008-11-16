@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SD.Shared;
 using System.Net;
 using System.IO;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AwesomeGame2.Data
 {
@@ -37,6 +38,12 @@ namespace AwesomeGame2.Data
 				Stream locationsStream = webClient.OpenRead("http://192.168.0.103:54321/locations?id=" + id);
 				return XmlHelper.DeserialiseLocationList(locationsStream)[0];
 			}
+		}
+
+
+		public Texture2D GetResourceTexture(ResourceEnum resourceType)
+		{
+			return AwesomeGame2.Instance.Content.Load<Texture2D>(@"Textures\Icons\" + resourceType.ToString());
 		}
 	}
 }
