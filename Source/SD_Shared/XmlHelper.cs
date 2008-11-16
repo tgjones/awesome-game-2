@@ -70,7 +70,7 @@ namespace SD.Shared
 																											Convert.ToDecimal(xe.Attribute(xNames.latitude).Value),
 																											Convert.ToDecimal(xe.Attribute(xNames.longitude).Value),
 																											(string) xe.Attribute(xNames.name),
-                                                                                                            (LocationEnum) Enum.Parse(typeof(LocationEnum), xNames.locationtype),
+                                                                                                            (LocationEnum) Enum.Parse(typeof(LocationEnum), (string) xe.Attribute(xNames.locationtype)),
 																											new List<StockInfo>(from xs in xe.Element(xNames.stocks).Elements(xNames.stock)
 																																					select
 																																							new StockInfo((ResourceEnum) Enum.Parse(typeof(ResourceEnum), (string) xs.Attribute(xNames.resourcetype)),
