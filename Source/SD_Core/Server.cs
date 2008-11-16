@@ -71,7 +71,8 @@ namespace SD.Core
                         {
                             //TODO: get player_id by looking up email address in players list
                             int player_id = 1;
-                            List<PlayerInfo> playerList = new List<PlayerInfo>(_connection.GetPlayers(player_id));
+                            List<PlayerInfo> playerList = new List<PlayerInfo>();
+                            playerList.Add(_connection.GetPlayer(player_id));
                             playerInfo = playerList[0];
                         }
 
@@ -109,21 +110,21 @@ namespace SD.Core
                     case "players":
                         Console.WriteLine("Oh the players!");
 
-                        List<PlayerInfo> players;
+                        List<PlayerInfo> players = new List<PlayerInfo>();
 
                         if (query.Length > 0)
                         {
                             string[] queries = query.Split('=');
                             if (queries[0] == "id")
-                                players = new List<PlayerInfo>(_connection.GetPlayers(int.Parse(queries[1])));
+                                players.Add(_connection.GetPlayer(int.Parse(queries[1])));
                             else if (queries[0] == "email")
-                                players = new List<PlayerInfo>(_connection.GetPlayers(queries[1]));
+                                players.Add(_connection.GetPlayer(queries[1]));
                             else
-                                players = new List<PlayerInfo>(_connection.GetPlayers());
+                                players.AddRange(_connection.GetPlayers());
                         }
                         else
                         {
-                            players = new List<PlayerInfo>(_connection.GetPlayers());
+                            players.AddRange(_connection.GetPlayers());
                         }
 
                         XmlHelper.SerialisePlayerList(players, context.Response.OutputStream);
@@ -132,19 +133,19 @@ namespace SD.Core
 
                         break;
                     case "locations":
-                        List<LocationInfo> locations;
+                        List<LocationInfo> locations = new List<LocationInfo>();
 
                         if (query.Length > 0)
                         {
                             string[] queries = query.Split('=');
                             if (queries[0] == "id")
-                                locations = new List<LocationInfo>(_connection.GetLocations(int.Parse(queries[1])));
+                                locations.Add(_connection.GetLocation(int.Parse(queries[1])));
                             else
-                                locations = new List<LocationInfo>(_connection.GetLocations());
+                                locations.AddRange(_connection.GetLocations());
                         }
                         else
                         {
-                            locations = new List<LocationInfo>(_connection.GetLocations());
+                            locations.AddRange(_connection.GetLocations());
                         }
 
                         foreach (LocationInfo location in locations)
@@ -171,25 +172,25 @@ namespace SD.Core
                         context.Response.OutputStream.Close();
                         break;
                     case "routes":
-                        List<RouteInfo> routes;
+                        List<RouteInfo> routes  = new List<RouteInfo>();
 
                         if (query.Length > 0)
                         {
                             string[] queries = query.Split('=');
                             if (queries[0] == "id")
-                                routes = new List<RouteInfo>(_connection.GetRoutes(int.Parse(queries[1])));
+                                routes.Add(_connection.GetRoute(int.Parse(queries[1])));
                             else
-                                routes = new List<RouteInfo>(_connection.GetRoutes());
+                                routes.AddRange(_connection.GetRoutes());
                         }
                         else
                         {
-                            routes = new List<RouteInfo>(_connection.GetRoutes());
+                            routes.AddRange(_connection.GetRoutes());
                         }
 
                         foreach (RouteInfo route in routes)
                         {
-                            route.FromLocation = (LocationInfo)_connection.GetLocations(route.FromLocationId).First();
-                            route.ToLocation = (LocationInfo)_connection.GetLocations(route.ToLocationId).First();
+                            route.FromLocation = _connection.GetLocation(route.FromLocationId);
+                            route.ToLocation = _connection.GetLocation(route.ToLocationId);
                         }
 
                         XmlHelper.SerialiseRouteList(routes, context.Response.OutputStream);
@@ -214,8 +215,8 @@ namespace SD.Core
 
                         foreach (MessageInfo message in messages)
                         {
-                            message.FromPlayer = (PlayerInfo)_connection.GetPlayers(message.FromPlayerId).First();
-                            message.ToPlayer = (PlayerInfo)_connection.GetPlayers(message.ToPlayerId).First();
+                            message.FromPlayer = _connection.GetPlayer(message.FromPlayerId);
+                            message.ToPlayer = _connection.GetPlayer(message.ToPlayerId);
                         }
 
                         XmlHelper.SerialiseMessageList(messages, context.Response.OutputStream);

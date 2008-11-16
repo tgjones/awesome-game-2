@@ -145,13 +145,12 @@ namespace SD.Core
         /// <summary>
         /// Retrieve a location from the database by id
         /// </summary>
-        internal IEnumerable<LocationInfo> GetLocations(int query_id)
+        internal LocationInfo GetLocation(int query_id)
         {
             if (!IsConnected)
                 throw new Exception("Not connected to database.");
 
-            List<LocationInfo> locations = new List<LocationInfo>();
-
+            LocationInfo result = null;
             lock (_connectionLock)
             {
                 MySqlCommand command = _connection.CreateCommand();
@@ -167,12 +166,12 @@ namespace SD.Core
                         string name = Reader.GetString(3);
                         LocationEnum locationtype = (LocationEnum)Reader.GetUInt32(4);
                         LocationInfo locationInfo = new LocationInfo(id, latitude, longitude, name, locationtype);
-                        locations.Add(locationInfo);
+                        result = locationInfo;
                     }
                 }
             }
 
-            return (locations);
+            return result;
         }
 
         /// <summary>
@@ -214,12 +213,12 @@ namespace SD.Core
         /// <summary>
         /// Retrieve a player from the database by id
         /// </summary>
-        internal IEnumerable<PlayerInfo> GetPlayers(int query_id)
+        internal PlayerInfo GetPlayer(int query_id)
         {
             if (!IsConnected)
                 throw new Exception("Not connected to database.");
 
-            List<PlayerInfo> players = new List<PlayerInfo>();
+            PlayerInfo result = null;
 
             lock (_connectionLock)
             {
@@ -239,22 +238,22 @@ namespace SD.Core
                         int balance = (int)Reader.GetInt32(6);
 
                         PlayerInfo playerInfo = new PlayerInfo(id, email, password, name, joined, last_login, balance);
-                        players.Add(playerInfo);
+                        result =playerInfo;
                     }
                 }
             }
-            return (players);
+            return result;
         }
 
         /// <summary>
         /// Retrieve a player from the database by email
         /// </summary>
-        internal IEnumerable<PlayerInfo> GetPlayers(string query_email)
+        internal PlayerInfo GetPlayer(string query_email)
         {
             if (!IsConnected)
                 throw new Exception("Not connected to database.");
 
-            List<PlayerInfo> players = new List<PlayerInfo>();
+            PlayerInfo result = null;
 
             MySqlCommand command = _connection.CreateCommand();
             command.CommandText = string.Format(@"SELECT P.id, P.email, P.password, P.name, P.joined, P.last_login, P.balance FROM players P WHERE P.email='{0}';", query_email);
@@ -274,11 +273,11 @@ namespace SD.Core
                         int balance = (int)Reader.GetInt32(6);
 
                         PlayerInfo playerInfo = new PlayerInfo(id, email, password, name, joined, last_login, balance);
-                        players.Add(playerInfo);
+                        result = playerInfo;
                     }
                 }
             }
-            return (players);
+            return result;
         }
 
         /// <summary>
@@ -388,12 +387,12 @@ namespace SD.Core
         /// <summary>
         /// Retrieve a route from the database by id
         /// </summary>
-        internal IEnumerable<RouteInfo> GetRoutes(int query_id)
+        internal RouteInfo GetRoute(int query_id)
         {
             if (!IsConnected)
                 throw new Exception("Not connected to database.");
 
-            List<RouteInfo> routes = new List<RouteInfo>();
+            RouteInfo result = null;
 
             MySqlCommand command = _connection.CreateCommand();
             command.CommandText = string.Format(@"SELECT R.id, R.from_location_id, R.to_location_id, R.distance, R.speed, R.cost, R.player_id, R.state FROM transport_routes R WHERE R.id={0};", query_id);
@@ -414,11 +413,11 @@ namespace SD.Core
                         decimal state = Reader.GetDecimal(7);
 
                         RouteInfo routeInfo = new RouteInfo(id, from_location_id, to_location_id, distance, speed, cost, player_id, state);
-                        routes.Add(routeInfo);
+                        result = routeInfo;
                     }
                 }
             }
-            return (routes);
+            return result;
         }
 
         /// <summary>
