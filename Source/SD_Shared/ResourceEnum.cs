@@ -30,4 +30,32 @@ namespace SD.Shared
         Clothes,
         Fuel
     }
+
+    public enum LocationEnum
+    {
+        None = 0,
+        Quarry,
+        Oil_Well,
+        Well,
+        Coal_Mine,
+        Forest,
+        Arable_Farm,
+        Dairy_Farm,
+        City,
+        Plastic_Factory,
+        Steel_Refinery,
+        Paper_Mill,
+        Toy_Factory,
+        Rubbish_Dump,
+        Printing_Press,
+        High_Tech_Factory,
+        Aggregates,
+        Building_Site,
+        Brewery,
+        Clothes_Factory,
+        Refinery,
+        Power_Station,
+        Diamond_Mine,
+        Workshop
+    }
 }

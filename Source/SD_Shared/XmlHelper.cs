@@ -25,6 +25,7 @@ namespace SD.Shared
             internal const string unitprice = "unitprice";
             internal const string quantity = "quantity";
             internal const string resourcetype = "resourcetype";
+            internal const string locationtype = "locationtype";
             internal const string players = "players";
             internal const string player = "player";
             internal const string email = "email";
@@ -69,6 +70,7 @@ namespace SD.Shared
 																											Convert.ToDecimal(xe.Attribute(xNames.latitude).Value),
 																											Convert.ToDecimal(xe.Attribute(xNames.longitude).Value),
 																											(string) xe.Attribute(xNames.name),
+                                                                                                            (LocationEnum) Enum.Parse(typeof(LocationEnum), xNames.locationtype),
 																											new List<StockInfo>(from xs in xe.Element(xNames.stocks).Elements(xNames.stock)
 																																					select
 																																							new StockInfo((ResourceEnum) Enum.Parse(typeof(ResourceEnum), (string) xs.Attribute(xNames.resourcetype)),
@@ -96,6 +98,7 @@ namespace SD.Shared
                         new XAttribute(xNames.latitude, l.Latitude),
                         new XAttribute(xNames.longitude, l.Longitude),
                         new XAttribute(xNames.name, l.Name),
+                        new XAttribute(xNames.locationtype, l.LocationType),
                         new XElement(xNames.stocks,
                             from s in l.Stocks
                             select

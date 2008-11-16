@@ -122,7 +122,7 @@ namespace SD.Core
             lock (_connectionLock)
             {
                 MySqlCommand command = _connection.CreateCommand();
-                command.CommandText = @"SELECT L.id, L.latitude, L.longitude, L.name FROM locations L;";
+                command.CommandText = @"SELECT L.id, L.latitude, L.longitude, L.name, L.type FROM locations L;";
 
                 using (MySqlDataReader Reader = command.ExecuteReader())
                 {
@@ -132,7 +132,8 @@ namespace SD.Core
                         decimal latitude = Reader.GetDecimal(1);
                         decimal longitude = Reader.GetDecimal(2);
                         string name = Reader.GetString(3);
-                        LocationInfo locationInfo = new LocationInfo(id, latitude, longitude, name);
+                        LocationEnum locationtype = (LocationEnum)Reader.GetUInt32(4);
+                        LocationInfo locationInfo = new LocationInfo(id, latitude, longitude, name, locationtype);
                         locations.Add(locationInfo);
                     }
                 }
@@ -154,7 +155,7 @@ namespace SD.Core
             lock (_connectionLock)
             {
                 MySqlCommand command = _connection.CreateCommand();
-                command.CommandText = string.Format(@"SELECT L.id, L.latitude, L.longitude, L.name FROM locations L WHERE L.id={0};", query_id);
+                command.CommandText = string.Format(@"SELECT L.id, L.latitude, L.longitude, L.name, L.type FROM locations L WHERE L.id={0};", query_id);
 
                 using (MySqlDataReader Reader = command.ExecuteReader())
                 {
@@ -164,7 +165,8 @@ namespace SD.Core
                         decimal latitude = Reader.GetDecimal(1);
                         decimal longitude = Reader.GetDecimal(2);
                         string name = Reader.GetString(3);
-                        LocationInfo locationInfo = new LocationInfo(id, latitude, longitude, name);
+                        LocationEnum locationtype = (LocationEnum)Reader.GetUInt32(4);
+                        LocationInfo locationInfo = new LocationInfo(id, latitude, longitude, name, locationtype);
                         locations.Add(locationInfo);
                     }
                 }
