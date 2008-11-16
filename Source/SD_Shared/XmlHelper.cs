@@ -116,5 +116,21 @@ namespace SD.Shared
         }
         #endregion //Serialise LoginInfo
 
+        #region Serialise RequestReply
+        public static void SerialiseRequestReply(RequestReply RequestReply, Stream stream)
+        {
+            XmlSerializer xs = new XmlSerializer(typeof(RequestReply));
+            xs.Serialize(stream, RequestReply);
+        }
+
+        public static RequestReply DeserialiseRequestReply(Stream stream)
+        {
+            RequestReply RequestReply;
+            XmlSerializer xs = new XmlSerializer(typeof(RequestReply));
+            RequestReply = (RequestReply)xs.Deserialize(stream);
+            return RequestReply;
+        }
+        #endregion //Serialise Player
+
     }
 }

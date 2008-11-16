@@ -56,7 +56,7 @@ namespace SD.Core
 
             #region Initialise Database
             Console.Write("Connecting to database...");
-            string MyConString = "SERVER=192.168.0.103;" +
+            string MyConString = "SERVER=80.82.119.156;" +
                 "DATABASE=sd;" +
                 "UID=sduser;" +
                 "PASSWORD=sdpass;";
@@ -313,6 +313,68 @@ namespace SD.Core
                 }
             }
             return (transporters);
+        }
+
+
+        internal TransporterInfo CreateTransporter(int player_id, int route_id, int from_location_id)
+        {
+            if (!IsConnected)
+                throw new Exception("Not connected to database.");
+
+            TransporterInfo transporter = new TransporterInfo();
+
+            int t_id=-1;
+            lock (_connectionLock)
+            {
+                MySqlCommand command = _connection.CreateCommand();
+                command.CommandText = @"SELECT id FROM transporters ORDER BY id DESC LIMIT 1";
+                using (MySqlDataReader Reader = command.ExecuteReader())
+                {
+                    while (Reader.Read())
+                    {
+                        t_id = (int)Reader.GetUInt32("id") + 1;
+                    }
+                }
+
+                command = _connection.CreateCommand();
+                command.CommandText = @"INSERT INTO transporters SET " +
+                                       " id=" + t_id +
+                                       ", player_id=" + player_id +
+                                       ", route_id=" + route_id + 
+                                       ", capacity=" + 1000 +
+                                       ", transport_type_id=0" +
+                                       ", last_moved=NOW()";
+                command.ExecuteNonQuery();
+            }
+
+            return (GetTransporters().FirstOrDefault(n => n.Id == t_id));
+
+        }
+
+
+        internal void MoveResourcesToTransporter(int location_id, int tranporter_id, ResourceEnum resource, int quantity)
+        {
+            if (!IsConnected)
+                throw new Exception("Not connected to database.");
+
+            MySqlCommand command = _connection.CreateCommand(); 
+            lock (_connectionLock)
+            {
+                // remove from location
+                command.CommandText = @"UPDATE location_stock SET quantity=quantity-" + quantity + " WHERE commodity_id=" + (int) resource + " AND location_id=" + location_id;
+                command.ExecuteNonQuery();
+
+                // remove existing items from transporter
+                command.CommandText = @"DELETE FROM transporter_stock WHERE transporter_id=" + tranporter_id + " AND commodity_id=" + (int)resource;
+                command.ExecuteNonQuery();
+
+                // set on transporter 
+                command.CommandText = @"INSERT INTO transporter_stock SET quantity=" + quantity + 
+                                            ", transporter_id=" + tranporter_id + 
+                                            ", commodity_id=" + (int)resource + 
+                                            ", bought_price=10";
+                command.ExecuteNonQuery();
+            }
         }
 
         internal IEnumerable<TransporterInfo> GetTransporters(int player_id)
@@ -884,6 +946,9 @@ namespace SD.Core
         #endregion
 
         #region Move transporters
+        /// <summary>
+        /// Move the transporters
+        /// </summary>
         internal void UpdateTransporters()
         {
             if (!IsConnected)

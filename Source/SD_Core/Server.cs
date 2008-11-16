@@ -150,7 +150,7 @@ namespace SD.Core
                         {
                             if (player.Id != authenticatedPlayerId)
                             {
-                                player.Email = "[private]";
+                                //player.Email = "[private]";
                                 player.Balance = int.MinValue;
                                 player.Joined = DateTime.MinValue;
                                 player.LastLogin = DateTime.MinValue;
@@ -200,6 +200,110 @@ namespace SD.Core
                         context.Response.OutputStream.Close();
                         break;
 
+                    case "transport":
+                        int from_id = -1;
+                        int to_id = -1;
+                        Dictionary<ResourceEnum, int> cargoList = new Dictionary<ResourceEnum, int>();
+
+                        // get data from parameters
+                        if (paramDict.ContainsKey("from")) from_id = int.Parse(paramDict["from"]);
+                        if (paramDict.ContainsKey("to")) to_id = int.Parse(paramDict["to"]);
+                        foreach (ResourceEnum resource in Enum.GetValues(typeof(ResourceEnum)))
+                        {
+                            string key = "stock" + resource.ToString().ToLower() ;
+                            if (paramDict.ContainsKey(key))
+                                cargoList.Add(resource, int.Parse(paramDict[key]));
+                        }
+
+                        //validate data
+                        RequestReply reply = new RequestReply();
+                        reply.Success = true;
+                        if (authenticatedPlayerId == -1)
+                        {
+                            reply.ErrorMessage = "Authentication failed.";
+                            reply.Success=false;
+                        }
+
+                        LocationInfo fromLocation = null;
+                        if (reply.Success)
+                        {
+                            fromLocation = _connection.GetLocation(from_id);
+                            if (fromLocation == null)
+                            {
+                                reply.ErrorMessage = "From location not found.";
+                                reply.Success = false;
+                            }
+                        }
+
+                        LocationInfo toLocation = null;
+                        if (reply.Success)
+                        {
+                            toLocation = _connection.GetLocation(from_id);
+                            if (toLocation == null)
+                            {
+                                reply.ErrorMessage = "To location not found.";
+                                reply.Success = false;
+                            }
+                        }
+
+                        if (reply.Success)
+                        {
+                            _connection.UpdateStockInfo(fromLocation);
+                            if (cargoList.Count == 0)
+                            {
+                                reply.ErrorMessage = "No cargo requested.";
+                                reply.Success = false;
+                            }
+                        }
+
+                        if (reply.Success)
+                        {
+
+                            //TODO: transaction to make sure resources are not sold whilst we are checking stocks
+
+                            foreach (KeyValuePair<ResourceEnum, int> cargo in cargoList)
+                            {
+                                StockInfo stockInfo = fromLocation.Stocks.First(s => s.ResourceType == cargo.Key);
+                                if (stockInfo == null)
+                                {
+                                    reply.ErrorMessage = "Resource " + cargo.Key + " is not available.";
+                                    reply.Success = false;
+                                }
+                                if (stockInfo.Quantity < cargo.Value)
+                                {
+                                    reply.ErrorMessage = "Resource " + cargo.Key + " is not available in sufficient quantities.";
+                                    reply.Success = false;
+                                }
+                            }
+                        }
+
+                        RouteInfo route = null;
+                        if (reply.Success)
+                        {
+                            // Determine which route to use
+                            route = _connection.GetRoutes().Where(r => r.FromLocationId == from_id).Where(r => r.ToLocationId == to_id).FirstOrDefault();
+                            if (route == null)
+                            {
+                                reply.ErrorMessage = "There is no route from " + fromLocation.Name + " to " + toLocation.Name + ".";
+                                reply.Success = false;
+                            }
+                        }
+
+                        if (reply.Success)
+                        {
+                            TransporterInfo newTransporter = _connection.CreateTransporter(authenticatedPlayerId, route.Id, from_id);
+
+                            foreach (KeyValuePair<ResourceEnum, int>cargo in cargoList)
+                            {
+                                _connection.MoveResourcesToTransporter(from_id, newTransporter.Id, cargo.Key, cargo.Value);
+                            }
+                        }
+
+                        XmlHelper.SerialiseRequestReply(reply, context.Response.OutputStream);
+                        context.Response.OutputStream.Close();
+
+                        break;
+
                     case "routes":
                         List<RouteInfo> routes  = new List<RouteInfo>();
 
@@ -216,10 +320,10 @@ namespace SD.Core
                             routes.AddRange(_connection.GetRoutes());
                         }
 
-                        foreach (RouteInfo route in routes)
+                        foreach (RouteInfo r in routes)
                         {
-                            route.FromLocation = _connection.GetLocation(route.FromLocationId);
-                            route.ToLocation = _connection.GetLocation(route.ToLocationId);
+                            r.FromLocation = _connection.GetLocation(r.FromLocationId);
+                            r.ToLocation = _connection.GetLocation(r.ToLocationId);
                         }
 
                         XmlHelper.SerialiseRouteList(routes, context.Response.OutputStream);

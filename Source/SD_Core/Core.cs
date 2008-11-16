@@ -28,7 +28,7 @@ namespace SD.Core
 #if DEBUG
             Server server = new Server(@"http://localhost:54321/", _connection);
 #else
-            Server server = new Server(@"http://192.168.0.103:54321/", _connection);
+            Server server = new Server(@"http://192.168.0.105:54321/", _connection);
 #endif
 
             new System.Threading.Thread(server.Start).Start();
