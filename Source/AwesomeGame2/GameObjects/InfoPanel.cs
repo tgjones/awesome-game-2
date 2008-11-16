@@ -12,6 +12,7 @@ namespace AwesomeGame2.GameObjects
 		private Texture2D _whitePixelTexture;
 		private float _alpha;
 		private int y;
+		private int imageX;
 
 		protected SpriteFont _titleBarFont, _headingFont, _subHeadingFont, _paragraphFont;
 		protected IPickable _boundObject;
@@ -40,17 +41,37 @@ namespace AwesomeGame2.GameObjects
 			if (_alpha > 1.0f)
 				_alpha = 1.0f;
 
+			imageX = 0;
 			y = 31;
 			
 			_spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
 			_spriteBatch.DrawString(_titleBarFont, _boundObject.GetType().Name + " - " + _boundObject.Name, new Vector2(13, 10), new Color(Color.White, _alpha));
 			DrawString(_headingFont, _boundObject.Name);
 			DrawDetail();
-			_spriteBatch.Draw(_whitePixelTexture, new Rectangle(10, 10, 300, 18), new Color(0.6f, 0.6f, 0.6f, _alpha * 0.3f));
-			_spriteBatch.Draw(_whitePixelTexture, new Rectangle(10, 30, 300, y - 27), new Color(0.6f, 0.6f, 0.6f, _alpha * 0.3f));
+			_spriteBatch.Draw(_whitePixelTexture, new Rectangle(10, 10, 276, 18), new Color(0.6f, 0.6f, 0.6f, _alpha * 0.3f));
+			_spriteBatch.Draw(_whitePixelTexture, new Rectangle(10, 30, 276, y - 27), new Color(0.6f, 0.6f, 0.6f, _alpha * 0.3f));
 			_spriteBatch.End();
 
 			base.Draw(gameTime);
+		}
+
+		protected void FinishImages(int height)
+		{
+			if (imageX != 0)
+			{
+				y += height + 4;
+				imageX = 0;
+			}
+		}
+
+		protected void DrawImage(Texture2D image, int width, int height)
+		{
+			if (imageX + width > 300)
+				FinishImages(height);
+
+			_spriteBatch.Draw(image, new Rectangle(imageX + 14, y, width, height), new Color(Color.White, _alpha));
+
+			imageX += width + 4;
 		}
 
 		protected void DrawString(SpriteFont font, string text)

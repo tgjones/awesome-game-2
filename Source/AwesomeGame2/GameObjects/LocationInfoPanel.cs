@@ -29,10 +29,16 @@ namespace AwesomeGame2.GameObjects
 			DrawString(_paragraphFont, _locationInfo.LocationType.ToString().Replace('_', ' '));
 			DrawString(_paragraphFont, null);
 			DrawString(_subHeadingFont, "Stocks");
+
+			ILocationDataService locationData = this.Game.Services.GetService<ILocationDataService>();
 			
 			foreach (StockInfo stock in _locationInfo.Stocks)
-				DrawString(_paragraphFont,
-					stock.ResourceType.ToString() + " - " + stock.Quantity + " available - Cost " + stock.UnitPrice);
+				DrawString(_paragraphFont, stock.ResourceType.ToString() + " - " + stock.Quantity + " available - Cost " + stock.UnitPrice);
+
+			foreach (StockInfo stock in _locationInfo.Stocks)
+				DrawImage(locationData.GetResourceTexture(stock.ResourceType), 64, 64);
+
+			FinishImages(64);
 		}
 	}
 }
