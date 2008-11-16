@@ -91,6 +91,7 @@
     <Compile Include="Data\IRouteDataService.cs" />
     <Compile Include="Data\LocationData.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="GameObjects\InfoPanel.cs" />
     <Compile Include="GameObjects\RouteInfoPanel.cs" />
     <Compile Include="GameObjects\Route.cs" />
     <Compile Include="GameObjects\LocationInfoPanel.cs" />

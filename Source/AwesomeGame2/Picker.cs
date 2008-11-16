@@ -179,7 +179,7 @@ namespace AwesomeGame2
 				}
 				if (add)
 				{
-					LocationInfoPanel panel = new LocationInfoPanel(this.Game, ((Location)SelectedPickable).LocationID);
+					LocationInfoPanel panel = new LocationInfoPanel(this.Game, ((Location)SelectedPickable));
 					this.Game.Components.Add(panel);
 				}
 			}

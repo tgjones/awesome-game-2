@@ -6,57 +6,33 @@ using AwesomeGame2.Data;
 
 namespace AwesomeGame2.GameObjects
 {
-	public class LocationInfoPanel : DrawableGameComponent
+	public class LocationInfoPanel : InfoPanel
 	{
-		private SpriteBatch _spriteBatch;
-		private Texture2D _whitePixelTexture;
-		private SpriteFont _headingFont, _subHeadingFont, _paragraphFont;
-
-		private int _locationID;
 		private LocationInfo _locationInfo;
 
 		public int LocationID
 		{
-			get { return _locationID; }
+			get { return _locationInfo.Id; }
 		}
 
-		public LocationInfoPanel(Game game, int locationID)
-			: base(game)
+		public LocationInfoPanel(Game game, Location location)
+			: base(game, null)
 		{
-			_locationID = locationID;
-		}
+			_boundObject = location;
 
-		public override void Initialize()
-		{
 			ILocationDataService locationData = this.Game.Services.GetService<ILocationDataService>();
-			_locationInfo = locationData.GetLocation(_locationID);
-			base.Initialize();
+			_locationInfo = locationData.GetLocation(location.LocationID);
 		}
 
-		protected override void LoadContent()
+		protected override void DrawDetail()
 		{
-			_spriteBatch = new SpriteBatch(this.GraphicsDevice);
-			_whitePixelTexture = this.Game.Content.Load<Texture2D>(@"Textures\WhitePixel");
-			_headingFont = this.Game.Content.Load<SpriteFont>(@"Fonts\Heading");
-			_subHeadingFont = this.Game.Content.Load<SpriteFont>(@"Fonts\SubHeading");
-			_paragraphFont = this.Game.Content.Load<SpriteFont>(@"Fonts\Paragraph");
-			base.LoadContent();
-		}
-
-		public override void Draw(GameTime gameTime)
-		{
-			_spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
-			_spriteBatch.Draw(_whitePixelTexture, new Rectangle(10, 10, 260, 300), new Color(0.6f, 0.6f, 0.6f, 0.3f));
-			_spriteBatch.DrawString(_headingFont, _locationInfo.Name, new Vector2(20, 20), Color.White);
-			_spriteBatch.DrawString(_paragraphFont, "This is the location", new Vector2(20, 70), Color.LightGray);
-			_spriteBatch.DrawString(_paragraphFont, "description. Blah blah blah.", new Vector2(20, 100), Color.LightGray);
-			_spriteBatch.DrawString(_subHeadingFont, "Stocks", new Vector2(20, 150), Color.White);
-			int y = 170;
+			DrawString(_paragraphFont, _locationInfo.LocationType.ToString().Replace('_', ' '));
+			DrawString(_paragraphFont, null);
+			DrawString(_subHeadingFont, "Stocks");
+			
 			foreach (StockInfo stock in _locationInfo.Stocks)
-				_spriteBatch.DrawString(_paragraphFont, stock.ResourceType.ToString() + " - " + stock.Quantity + " available - Cost " + stock.UnitPrice, new Vector2(20, y += 30), Color.LightGray);
-			_spriteBatch.End();
-
-			base.Draw(gameTime);
+				DrawString(_paragraphFont,
+					stock.ResourceType.ToString() + " - " + stock.Quantity + " available - Cost " + stock.UnitPrice);
 		}
 	}
 }

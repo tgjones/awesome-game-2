@@ -196,6 +196,11 @@
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </None>
+    <Compile Include="Fonts\Titlebar.spritefont">
+      <Name>Titlebar</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
     <Compile Include="Models\LocationTypes\Aggregates.x">
       <Name>Aggregates</Name>
       <Importer>XImporter</Importer>
