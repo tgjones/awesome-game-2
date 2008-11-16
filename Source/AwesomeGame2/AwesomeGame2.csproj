@@ -89,6 +89,7 @@
     <Compile Include="Cursor.cs" />
     <Compile Include="Data\LocationData.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="GameObjects\Route.cs" />
     <Compile Include="GameObjects\LocationInfoPanel.cs" />
     <Compile Include="GameObjects\Location.cs" />
     <Compile Include="ICameraService.cs" />
