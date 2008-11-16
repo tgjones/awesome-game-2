@@ -5,15 +5,51 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AwesomeGame2.GameObjects
 {
-	public class Route : DrawableGameComponent
+	public class Route : DrawableGameComponent, IPickable
 	{
 		private BasicEffect lineEffect;
 		private VertexDeclaration lineVertexDeclaration;
 		private VertexPositionColor[] lineVertices;
-
+		
 		private LocationInfo _locationInfo1;
 		private LocationInfo _locationInfo2;
-		
+
+		public LocationInfo LocationInfo1
+		{
+			get { return _locationInfo1; }
+		}
+
+		public LocationInfo LocationInfo2
+		{
+			get { return _locationInfo2; }
+		}
+
+		public Vector3[] Vertices
+		{
+			get;
+			set;
+		}
+
+		public int PrimitiveStepCount
+		{
+			get { return 1; }
+		}
+
+		public string Name
+		{
+			get { return _locationInfo1.Name + " to " + _locationInfo2.Name; }
+		}
+
+		public Matrix World
+		{
+			get { return Matrix.Identity; }
+		}
+
+		public BoundingSphere BoundingSphere
+		{
+			get { return this.Game.Services.GetService<IGlobeService>().BoundingSphere; }
+		}
+
 		public Route(Game game, LocationInfo locationInfo1, LocationInfo locationInfo2)
 			: base(game)
 		{
@@ -33,6 +69,8 @@ namespace AwesomeGame2.GameObjects
 			// Calculate location
 			int lNumberOfSegments = 350;
 			lineVertices = new VertexPositionColor[lNumberOfSegments];
+			Vertices = new Vector3[lNumberOfSegments];
+
 			for (int i = 0; i < lNumberOfSegments; i++)
 			{
 				float lPercentage = i / (lNumberOfSegments - 1.0f);
@@ -52,7 +90,8 @@ namespace AwesomeGame2.GameObjects
 				float z = scale * (float)Math.Cos(theta);
 
 				// Populate vertices
-				lineVertices[i] = new VertexPositionColor(new Vector3(x, y, z), new Color(Color.Black, 0.5f));
+				Vertices[i] = new Vector3(x, y, z);
+				lineVertices[i] = new VertexPositionColor(Vertices[i], new Color(Color.Black, 0.5f));
 			}
 
 			base.LoadContent();

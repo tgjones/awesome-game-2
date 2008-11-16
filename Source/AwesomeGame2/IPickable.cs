@@ -24,5 +24,10 @@ namespace AwesomeGame2
 		{
 			get;
 		}
+
+		int PrimitiveStepCount
+		{
+			get;
+		}
 	}
 }

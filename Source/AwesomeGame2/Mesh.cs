@@ -55,6 +55,11 @@ namespace AwesomeGame2
 			get { return (Vector3[]) this.TagData["Vertices"]; }
 		}
 
+		public int PrimitiveStepCount
+		{
+			get { return 3; }
+		}
+
 		public Mesh(Game game, string assetName)
 			: base(game)
 		{

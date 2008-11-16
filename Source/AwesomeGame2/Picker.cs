@@ -170,6 +170,28 @@ namespace AwesomeGame2
 				this.Game.Components.Remove(this.Game.Components.OfType<LocationInfoPanel>().SingleOrDefault());
 			}
 
+			if (pickedPickable != null && pickedPickable is Route)
+			{
+				RouteInfoPanel panel = this.Game.Components.OfType<RouteInfoPanel>().SingleOrDefault();
+				bool add = true;
+				if (panel != null)
+				{
+					if (panel.LocationID1 != ((Route)pickedPickable).LocationInfo1.Id || panel.LocationID2 != ((Route)pickedPickable).LocationInfo2.Id)
+						this.Game.Components.Remove(panel);
+					else
+						add = false;
+				}
+				if (add)
+				{
+					panel = new RouteInfoPanel(this.Game, ((Route)pickedPickable).LocationInfo1, ((Route)pickedPickable).LocationInfo2);
+					this.Game.Components.Add(panel);
+				}
+			}
+			else
+			{
+				this.Game.Components.Remove(this.Game.Components.OfType<RouteInfoPanel>().SingleOrDefault());
+			}
+
 			base.Update(gameTime);
 		}
 
@@ -225,7 +247,7 @@ namespace AwesomeGame2
 
 				// Loop over the vertex data, 3 at a time (3 vertices = 1 triangle).
 				Vector3[] vertices = pickable.Vertices;
-				for (int i = 0; i < vertices.Length; i += 3)
+				for (int i = 0; i < vertices.Length - 2; i += pickable.PrimitiveStepCount)
 				{
 					// Perform a ray to triangle intersection test.
 					float? intersection;
@@ -352,41 +374,38 @@ namespace AwesomeGame2
 
 		public override void Draw(GameTime gameTime)
 		{
-			/*if (pickedModelName != null)
-			{
-				GraphicsDevice device = this.Game.GraphicsDevice;
-				RenderState renderState = device.RenderState;
+			/*GraphicsDevice device = this.Game.GraphicsDevice;
+			RenderState renderState = device.RenderState;
 
-				// Set line drawing renderstates. We disable backface culling
-				// and turn off the depth buffer because we want to be able to
-				// see the picked triangle outline regardless of which way it is
-				// facing, and even if there is other geometry in front of it.
-				renderState.FillMode = FillMode.WireFrame;
-				renderState.CullMode = CullMode.None;
-				renderState.DepthBufferEnable = false;
+			// Set line drawing renderstates. We disable backface culling
+			// and turn off the depth buffer because we want to be able to
+			// see the picked triangle outline regardless of which way it is
+			// facing, and even if there is other geometry in front of it.
+			renderState.FillMode = FillMode.WireFrame;
+			renderState.CullMode = CullMode.None;
+			renderState.DepthBufferEnable = false;
 
-				// Activate the line drawing BasicEffect.
-				ICameraService camera = this.Game.Services.GetService<ICameraService>();
-				lineEffect.Projection = camera.Projection;
-				lineEffect.View = camera.View;
+			// Activate the line drawing BasicEffect.
+			ICameraService camera = this.Game.Services.GetService<ICameraService>();
+			lineEffect.Projection = camera.Projection;
+			lineEffect.View = camera.View;
 
-				lineEffect.Begin();
-				lineEffect.CurrentTechnique.Passes[0].Begin();
+			lineEffect.Begin();
+			lineEffect.CurrentTechnique.Passes[0].Begin();
 
-				// Draw the triangle.
-				device.VertexDeclaration = lineVertexDeclaration;
+			// Draw the triangle.
+			device.VertexDeclaration = lineVertexDeclaration;
 
-				device.DrawUserPrimitives(PrimitiveType.TriangleList, pickedTriangle, 0, 1);
-				//device.DrawUserPrimitives(PrimitiveType.LineList, pickedRadius, 0, 1);
+			device.DrawUserPrimitives(PrimitiveType.TriangleList, pickedTriangle, 0, 1);
+			//device.DrawUserPrimitives(PrimitiveType.LineList, pickedRadius, 0, 1);
 
-				lineEffect.CurrentTechnique.Passes[0].End();
-				lineEffect.End();
+			lineEffect.CurrentTechnique.Passes[0].End();
+			lineEffect.End();
 
-				// Reset renderstates to their default values.
-				renderState.FillMode = FillMode.Solid;
-				renderState.CullMode = CullMode.None;
-				renderState.DepthBufferEnable = true;
-			}*/
+			// Reset renderstates to their default values.
+			renderState.FillMode = FillMode.Solid;
+			renderState.CullMode = CullMode.None;
+			renderState.DepthBufferEnable = true;*/
 
 			base.Draw(gameTime);
 		}

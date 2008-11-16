@@ -51,6 +51,11 @@ namespace AwesomeGame2
 			get { return _vertices; }
 		}
 
+		public int PrimitiveStepCount
+		{
+			get { return 3; }
+		}
+
 		public float Radius
 		{
 			get { return _radius; }
