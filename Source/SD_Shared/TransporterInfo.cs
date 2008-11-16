@@ -7,8 +7,6 @@ namespace SD.Shared
 {
     public class TransporterInfo
     {
-        List<StockInfo> _stocks = new List<StockInfo>();
-
         public int Id { get; set; }
         public int PlayerId { get; set; }
         public int RouteId { get; set; }
@@ -16,9 +14,15 @@ namespace SD.Shared
         public decimal DistanceTravelled { get; set; }
         public int Capacity { get; set; }
         public int TransportTypeId { get; set; }
-        public List<StockInfo> Stocks { get { return _stocks; } }
+        public List<StockInfo> Stocks { get; set; }
+
+        public TransporterInfo()
+        {
+            Stocks = new List<StockInfo>();
+        }
 
         public TransporterInfo(int id, int playerId, int routeId, DateTime lastMoved, decimal distanceTravelled, int capacity, int transportTypeId)
+            : this()
         {
             Id = id;
             PlayerId = playerId;
@@ -29,11 +33,5 @@ namespace SD.Shared
             TransportTypeId = transportTypeId;
         }
 
-        public TransporterInfo(int id, int playerId, int routeId, DateTime lastMoved, decimal distanceTravelled, int capacity, int transportTypeId, List<StockInfo> stocks)
-            : this(id, playerId, routeId, lastMoved, distanceTravelled, capacity, transportTypeId)
-        {
-            _stocks.Clear();
-            _stocks.AddRange(stocks);
-        }
     }
 }

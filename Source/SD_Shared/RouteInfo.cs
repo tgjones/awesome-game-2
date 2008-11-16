@@ -18,7 +18,11 @@ namespace SD.Shared
         public LocationInfo FromLocation { get; set; }
         public LocationInfo ToLocation { get; set; }
 
+        public RouteInfo()
+        { }
+
         public RouteInfo(int id, int fromLocationId, int toLocationId, decimal distance, decimal speed, int cost, int playerId, decimal state)
+            : this()
         {
             Id = id;
             FromLocationId = fromLocationId;

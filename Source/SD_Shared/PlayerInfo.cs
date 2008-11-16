@@ -15,7 +15,10 @@ namespace SD.Shared
         public DateTime LastLogin { get; set; }
         public int Balance { get; set; }
 
+        public PlayerInfo() { }
+
         public PlayerInfo(int id, string email, string password, string name, DateTime joined, DateTime lastLogin, int balance)
+            : this()
         {
             Id = id;
             Email = email;

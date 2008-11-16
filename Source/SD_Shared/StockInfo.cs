@@ -11,7 +11,11 @@ namespace SD.Shared
         public int Quantity { get; set; }
         public int UnitPrice { get; set; }
 
+        public StockInfo()
+        { }
+
         public StockInfo(ResourceEnum resourceType, int quantity, int unitPrice)
+            : this()
         {
             this.ResourceType = resourceType;
             this.Quantity = quantity;
