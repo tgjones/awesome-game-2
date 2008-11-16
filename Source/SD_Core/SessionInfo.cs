@@ -39,5 +39,15 @@ namespace SD.Core
             return null;
         }
 
+        internal SessionInfo FindSession(Guid session_key)
+        {
+            foreach (SessionInfo session in this)
+            {
+                if (session.session_key == session_key)
+                    return session;
+            }
+            return null;
+        }
+
     }
 }

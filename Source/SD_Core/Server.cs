@@ -120,19 +120,37 @@ namespace SD.Core
 
                         List<PlayerInfo> players = new List<PlayerInfo>();
 
+                        SessionInfo session = null;
                         if (query.Length > 0)
                         {
-                            string[] queries = query.Split('=');
-                            if (queries[0] == "id")
-                                players.Add(_connection.GetPlayer(int.Parse(queries[1])));
-                            else if (queries[0] == "email")
-                                players.Add(_connection.GetPlayer(queries[1]));
+                            Dictionary<string, string> paramDict = SeparateParameters(query);
+
+                            if (paramDict.ContainsKey("sessionkey"))
+                                session = _sessions.FindSession(new Guid(paramDict["sessionkey"]));
+
+                            if (paramDict.ContainsKey("id"))
+                                players.Add(_connection.GetPlayer(int.Parse(paramDict["id"])));
+                            else if (paramDict.ContainsKey("email"))
+                                players.Add(_connection.GetPlayer(paramDict["email"]));
                             else
                                 players.AddRange(_connection.GetPlayers());
                         }
                         else
                         {
                             players.AddRange(_connection.GetPlayers());
+                        }
+
+                        // don't expose private data
+                        foreach (PlayerInfo player in players)
+                        {
+                            if (session == null || player.Id != session.player_id)
+                            {
+                                player.Email = "[private]";
+                                player.Balance = int.MinValue;
+                                player.Joined = DateTime.MinValue;
+                                player.LastLogin = DateTime.MinValue;
+                                player.Password = string.Empty;
+                            }
                         }
 
                         XmlHelper.SerialisePlayerList(players, context.Response.OutputStream);
@@ -165,6 +183,7 @@ namespace SD.Core
 
                         context.Response.OutputStream.Close();
                         break;
+
                     case "transporters":
                         List<TransporterInfo> transporters;
                         
@@ -179,6 +198,7 @@ namespace SD.Core
 
                         context.Response.OutputStream.Close();
                         break;
+
                     case "routes":
                         List<RouteInfo> routes  = new List<RouteInfo>();
 
@@ -241,6 +261,24 @@ namespace SD.Core
             }
 
             Console.WriteLine("Thread exiting.");
+        }
+
+        Dictionary<string, string> SeparateParameters(string parameters)
+        {
+            string[] parameterAry = parameters.Split('&');
+
+            Dictionary<string, string> paramDict = new Dictionary<string, string>();
+
+            foreach (string parameter in parameterAry)
+            {
+                string[] bits = parameter.Split('=');
+                if (bits.Length == 2)
+                {
+                    paramDict.Add(bits[0].ToLower(), bits[1]);
+                }
+            }
+
+            return paramDict;
         }
     }
 }
