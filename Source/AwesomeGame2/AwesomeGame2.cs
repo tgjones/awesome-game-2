@@ -90,6 +90,10 @@ namespace AwesomeGame2
 			foreach (RouteInfo lRoute in lRoutes)
 				this.Components.Add(new Route(this, lRoute));
 
+			IPlayerDataService playerData = new PlayerData();
+			this.Services.AddService(typeof(IPlayerDataService), playerData);
+			this.Components.Add(new PlayerInfoPanel(this));
+
 			base.Initialize();
 		}
 

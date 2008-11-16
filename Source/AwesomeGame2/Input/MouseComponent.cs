@@ -31,6 +31,16 @@ namespace AwesomeGame2.Input
             get { return _currentMouseState.RightButton == ButtonState.Pressed; }
         }
 
+				public int X
+				{
+					get { return _currentMouseState.X; }
+				}
+
+				public int Y
+				{
+					get { return _currentMouseState.Y; }
+				}	
+
         public override void Update(GameTime gameTime)
 		{
 			_previousMouseState = _currentMouseState;

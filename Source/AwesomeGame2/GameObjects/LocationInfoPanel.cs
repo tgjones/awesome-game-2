@@ -15,17 +15,21 @@ namespace AwesomeGame2.GameObjects
 			get { return _locationInfo.Id; }
 		}
 
-		public LocationInfoPanel(Game game, Location location)
-			: base(game, null)
+		protected override string GetTitle()
 		{
-			_boundObject = location;
+			return "Location - " + _locationInfo.Name;
+		}
 
+		public LocationInfoPanel(Game game, Location location)
+			: base(game, 10, 276)
+		{
 			ILocationDataService locationData = this.Game.Services.GetService<ILocationDataService>();
 			_locationInfo = locationData.GetLocation(location.LocationID);
 		}
 
 		protected override void DrawDetail()
 		{
+			DrawString(_headingFont, _locationInfo.Name);
 			DrawString(_paragraphFont, _locationInfo.LocationType.ToString().Replace('_', ' '));
 			DrawString(_paragraphFont, null);
 			DrawString(_subHeadingFont, "Stocks");

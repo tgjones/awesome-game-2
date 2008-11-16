@@ -15,14 +15,20 @@ namespace AwesomeGame2.GameObjects
 			get { return _route.RouteInfo.Id; }
 		}
 
+		protected override string GetTitle()
+		{
+			return "Route - Route " + RouteID;
+		}
+
 		public RouteInfoPanel(Game game, Route route)
-			: base(game, route)
+			: base(game, 10, 276)
 		{
 			_route = route;
 		}
 
 		protected override void DrawDetail()
 		{
+			DrawString(_headingFont, GetTitle());
 			DrawString(_paragraphFont, "From: " + _route.RouteInfo.FromLocation.Name);
 			DrawString(_paragraphFont, "To: " + _route.RouteInfo.ToLocation.Name);
 			DrawString(_paragraphFont, null);

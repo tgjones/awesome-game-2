@@ -87,10 +87,13 @@
     <Compile Include="Camera.cs" />
     <Compile Include="ChainedRenderTarget.cs" />
     <Compile Include="Cursor.cs" />
+    <Compile Include="Data\PlayerData.cs" />
+    <Compile Include="Data\IPlayerDataService.cs" />
     <Compile Include="Data\RouteData.cs" />
     <Compile Include="Data\IRouteDataService.cs" />
     <Compile Include="Data\LocationData.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="GameObjects\PlayerInfoPanel.cs" />
     <Compile Include="GameObjects\InfoPanel.cs" />
     <Compile Include="GameObjects\RouteInfoPanel.cs" />
     <Compile Include="GameObjects\Route.cs" />

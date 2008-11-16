@@ -11,16 +11,18 @@ namespace AwesomeGame2.GameObjects
 		private SpriteBatch _spriteBatch;
 		private Texture2D _whitePixelTexture;
 		private float _alpha;
+		private int _width;
+		private int x;
 		private int y;
 		private int imageX;
 
 		protected SpriteFont _titleBarFont, _headingFont, _subHeadingFont, _paragraphFont;
-		protected IPickable _boundObject;
 
-		public InfoPanel(Game game, IPickable boundObject)
+		public InfoPanel(Game game, int x, int width)
 			: base(game)
 		{
-			_boundObject = boundObject;
+			this.x = x;
+			_width = width;
 		}
 
 		protected override void LoadContent()
@@ -45,11 +47,10 @@ namespace AwesomeGame2.GameObjects
 			y = 31;
 			
 			_spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState);
-			_spriteBatch.DrawString(_titleBarFont, _boundObject.GetType().Name + " - " + _boundObject.Name, new Vector2(13, 10), new Color(Color.White, _alpha));
-			DrawString(_headingFont, _boundObject.Name);
+			_spriteBatch.DrawString(_titleBarFont, GetTitle(), new Vector2(x + 3, 10), new Color(Color.White, _alpha));
 			DrawDetail();
-			_spriteBatch.Draw(_whitePixelTexture, new Rectangle(10, 10, 276, 18), new Color(0.6f, 0.6f, 0.6f, _alpha * 0.3f));
-			_spriteBatch.Draw(_whitePixelTexture, new Rectangle(10, 30, 276, y - 27), new Color(0.6f, 0.6f, 0.6f, _alpha * 0.3f));
+			_spriteBatch.Draw(_whitePixelTexture, new Rectangle(x, 10, _width, 18), new Color(0.6f, 0.6f, 0.6f, _alpha * 0.3f));
+			_spriteBatch.Draw(_whitePixelTexture, new Rectangle(x, 30, _width, y - 27), new Color(0.6f, 0.6f, 0.6f, _alpha * 0.3f));
 			_spriteBatch.End();
 
 			base.Draw(gameTime);
@@ -66,22 +67,42 @@ namespace AwesomeGame2.GameObjects
 
 		protected void DrawImage(Texture2D image, int width, int height)
 		{
-			if (imageX + width > 300)
+			if (imageX + width > _width)
 				FinishImages(height);
 
-			_spriteBatch.Draw(image, new Rectangle(imageX + 14, y, width, height), new Color(Color.White, _alpha));
+			_spriteBatch.Draw(image, new Rectangle(imageX + x + 4, y, width, height), new Color(Color.White, _alpha));
 
 			imageX += width + 4;
 		}
 
 		protected void DrawString(SpriteFont font, string text)
 		{
+			DrawString(font, text, false);
+		}
+
+		protected void DrawString(SpriteFont font, string text, bool enableSelection)
+		{
+			Color lDrawColor = new Color(Color.White, _alpha);
+			if (enableSelection)
+			{
+				Input.IMouseService lMouseService = this.Game.Services.GetService<Input.IMouseService>();
+				if (
+					lMouseService.X > x &&
+					lMouseService.X < (x + _width) &&
+					lMouseService.Y > y &&
+					lMouseService.Y < (y + font.LineSpacing))
+				{
+					lDrawColor = new Color(Color.PowderBlue, _alpha); // hover
+				}
+			}
+
 			if (!string.IsNullOrEmpty(text))
-				_spriteBatch.DrawString(font, text, new Vector2(14, y), new Color(Color.White, _alpha));
+				_spriteBatch.DrawString(font, text, new Vector2(x + 4, y), lDrawColor);
 
 			y += font.LineSpacing;
 		}
 
+		protected abstract string GetTitle();
 		protected abstract void DrawDetail();
 	}
 }

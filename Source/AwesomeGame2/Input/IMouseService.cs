@@ -8,5 +8,7 @@ namespace AwesomeGame2.Input
         int ScrollWheelValueChange { get; }
 				bool LeftClickPressed { get; }
         bool RightClickPressed { get; }
+				int X { get; }
+				int Y { get; }
     }
 }
