@@ -13,6 +13,7 @@ namespace AwesomeGame2
 		private float _targetRadius;
 		private Vector3 _pickedRadius;
 		private Vector2 _position;
+		private Vector2 _positionChange;
 
 		#region Properties
 
@@ -132,11 +133,14 @@ namespace AwesomeGame2
 				Vector3 lDifference = lPicker.PickedRadius - _pickedRadius;
 				lDifference = Vector3.Transform(lDifference, this.View) * (float) Math.Sqrt(Radius) / 4.0f;
 
-				_position.X -= lDifference.X;
-				_position.Y += lDifference.Y;
+				_positionChange.X = -lDifference.X;
+				_positionChange.Y = lDifference.Y;
 
 				_pickedRadius = lPicker.PickedRadius;
 			}
+
+			_positionChange = Vector2.SmoothStep(_positionChange, Vector2.Zero, gameTime.ElapsedGameTime.Ticks * 11.0f / TimeSpan.TicksPerSecond);
+			_position += _positionChange;
 
 			Matrix lMatrix =
 					Matrix.CreateRotationX(_position.Y) *
