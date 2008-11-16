@@ -124,7 +124,9 @@ namespace AwesomeGame2
 						_effect.Parameters["TextureEnabled"].SetValue(((BasicEffect) meshPart.Effect).TextureEnabled);
 						_effect.Parameters["DiffuseColour"].SetValue(((BasicEffect) meshPart.Effect).DiffuseColor);
 						_effect.Parameters["WorldViewProjection"].SetValue(transforms[mesh.ParentBone.Index] * wvp);
-						_effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(this.World));
+						_effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(transforms[mesh.ParentBone.Index] * this.World));
+						_effect.Parameters["World"].SetValue(transforms[mesh.ParentBone.Index] * this.World);
+						_effect.Parameters["CameraPosition"].SetValue(camera.Position);
 						_effect.Parameters["CullMode"].SetValue((int) CullMode.CullCounterClockwiseFace);
 						_effect.CommitChanges();
 

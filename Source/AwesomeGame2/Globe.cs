@@ -129,7 +129,7 @@ namespace AwesomeGame2
 					Vector3 normal = new Vector3(x, y, z);
 					vertices[vertexIndex++] = new VertexPositionNormalTexture(
 						normal + _centre,
-						normal,
+						Vector3.Normalize(normal),
 						new Vector2((float) slice / _slices, (float) stack / _stacks));
 				}
 			}
@@ -192,6 +192,8 @@ namespace AwesomeGame2
 			ICameraService camera = this.Game.Services.GetService<ICameraService>();
 			_effect.Parameters["WorldViewProjection"].SetValue(this.World * camera.View * camera.Projection);
 			_effect.Parameters["InverseWorld"].SetValue(Matrix.Invert(this.World));
+			_effect.Parameters["World"].SetValue(this.World);
+			_effect.Parameters["CameraPosition"].SetValue(camera.Position);
 			_effect.Parameters["CullMode"].SetValue((int) CullMode.CullClockwiseFace);
 
 			this.GraphicsDevice.VertexDeclaration = _vertexDeclaration;

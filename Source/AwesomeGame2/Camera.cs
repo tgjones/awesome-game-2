@@ -14,6 +14,7 @@ namespace AwesomeGame2
 		private Vector3 _pickedRadius;
 		private Vector2 _position;
 		private Vector2 _positionChange;
+		private Vector3 _worldPosition;
 
 		#region Properties
 
@@ -75,6 +76,11 @@ namespace AwesomeGame2
 		{
 			get;
 			private set;
+		}
+
+		public Vector3 Position
+		{
+			get { return _worldPosition; }
 		}
 
 		#endregion
@@ -148,6 +154,8 @@ namespace AwesomeGame2
 
 			Vector3 lPosition = Vector3.Transform(Vector3.Backward * Radius, lMatrix);
 			Vector3 lUp = Vector3.Transform(Vector3.Up, lMatrix);
+
+			_worldPosition = lPosition;
 
 			this.View = Matrix.CreateLookAt(lPosition, this.LookAt, lUp);
 			this.Projection = Matrix.CreatePerspectiveFieldOfView(this.FieldOfView,

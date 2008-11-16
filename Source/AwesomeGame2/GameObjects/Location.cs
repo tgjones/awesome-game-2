@@ -68,17 +68,8 @@ namespace AwesomeGame2.GameObjects
 		public override void Initialize()
 		{
 			string locationMeshAssetName = _locationInfo.LocationType.ToString();
-			try
-			{
-				_locationMesh = new Mesh(this.Game, @"Models\LocationTypes\" + locationMeshAssetName);
-				_locationMesh.Initialize();
-			}
-			catch
-			{
-#warning Remove this once all location type meshes are available
-				_locationMesh = new Mesh(this.Game, @"Models\LocationTypes\City");
-				_locationMesh.Initialize();
-			}
+			_locationMesh = new Mesh(this.Game, @"Models\LocationTypes\" + locationMeshAssetName);
+			_locationMesh.Initialize();
 
 			_stockMeshes = new List<Mesh>();
 			foreach (StockInfo stock in _locationInfo.Stocks)

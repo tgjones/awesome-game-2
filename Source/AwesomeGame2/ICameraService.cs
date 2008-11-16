@@ -14,5 +14,10 @@ namespace AwesomeGame2
 		{
 			get;
 		}
+
+		Vector3 Position
+		{
+			get;
+		}
 	}
 }
